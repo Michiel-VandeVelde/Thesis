@@ -31,10 +31,10 @@ or one version with many conditions making maintainability a nightmare.
 
 In order to tackle these issues, previous work introduced the idea of a modular parser, but did not create a full implementation [](cite:cites modular-parsing).
 Their idea is essentially to introduce an indirection layer in your grammar definitions,
-meaning that the declaration of a rule, consisting of subrules and token, is done based on identifiers of the rules.
+meaning that the declaration of a rule, consisting of subrules and tokens, is done based on identifiers of the rules.
 The identifiers of those rules are only replaced with the actual implementation of the rules when you compile/ build the parser.
 By cleverly defining an API that links rule identifiers with rule implementations, one creates a composable parser.
-Additionally, a parser only gets you the Abstract Syntax Tree (AST) or Concrete Syntax Tree (CST),
+Additionally, a parser only gets you the Abstract Syntax Tree (AST) or Concrete Syntax Tree (CST) [](cite:cites alfred2007compilers),
 while query engines operate on a higher level, namely the [SPARQL Algebra](cite:cites spec:sparqllang).
 The SPARQL specification describes how to translate the AST into these algebraic operations.
 Query evaluation and optimization relies on the manipulation of these algebraic operations,
@@ -51,10 +51,11 @@ An example would be the expansion of the variable _'s'_ to _'subject'_ in `SelEC
 while not changing the capitalisation or spacing to `SelECT_*_{_?subject__?p_?o_}`. 
 
 In order to handle the heterogeneity of SPARQL,
-which is projected to only increase with the adoption of [RDF 1.2](cite:cites rdf-1-2) and the subsequent maintenance mode of the RDF 1.2 workgroup.
+which is projected to only increase with the adoption of [RDF 1.2](cite:cites rdf-1-2) and the [subsequent maintenance mode](https://github.com/w3c/sparql-dev/issues/32#issuecomment-2621209920) of the RDF 1.2 workgroup [](cite:cites modular-parsing).
 There is a need for a modular SPARQL parser, generator, and algebra transformation toolkit.
 In this paper we introduce _Traqula_, a modular toolkit that already supports [SPARQL 1.1](cite:cites spec:sparqllang) and [SPARQL 1.2](cite:cites sparql-1-2).
 Traqula aims to allow researchers and practitioners to:
+
 1. investigate the effect of making grammar changes (adding, modifying or deleting grammar rules),
 2. increase maintainability of language tools including the parsers, generator and algebra transformers across different SPARQL versions, and
 3. open the path for future query formatting/ rewriting tools based on round tripping.
