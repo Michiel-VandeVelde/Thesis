@@ -62,6 +62,143 @@ and hand build parser while still providing excellent execution times according 
 
 ### Existing SPARQL/ SQL parsers
 
+[Previous work](cite:cites modular-parsing) which introduced the concept of modular parsing for SPARQL contained a
+detailed analysis of what tools were used by popular open-source SPARQL implementations.
+Since an analysis of used methods to create query language parsers is relevant,
+we repeat it here while extending their analysis to cover query languages such as
+[SQL](cite:cites iso-sql), [GraphQL](cite:cites spec:graphql), [GQL](cite:cites iso-gql), and [Neo4J's cypher](cite:cites neo4j).   
+
+
+<table>
+    <thead><tr>
+        <th>Software Package</th><th>Query Language</th><th>Parsing Software</th><th>Parser Generator</th>
+    </tr></thead>
+    <tbody><tr>
+        <td markdown="1">
+[Comunica](cite:cites comunica)
+</td>
+        <td>SPARQL</td>
+        <td markdown="1">
+[SPARQL.js](cite:cites sparqljs)
+<sup class="screenonly"><a href="https://github.com/comunica/comunica/blob/94e1eacab069551590cc250074b36bce08720c4c/packages/actor-query-parse-sparql/package.json#L50">proof</a></sup>
+</td>
+        <td markdown="1">
+[Jison](cite:cites jison)
+<sup class="screenonly"><a href="https://github.com/RubenVerborgh/SPARQL.js/blob/13cc3d2ee4d2528b85d8b25cfbf886597dd100c1/lib/sparql.jison">proof</a></sup>
+</td>
+    </tr><tr>
+        <td>[Yasgui](cite:cites yasgui)</td>
+        <td>SPARQL</td>
+        <td></td>
+        <td><a href="https://www.swi-prolog.org/">SWI Prolog</a>
+        <sup class="screenonly"><a href="https://github.com/TriplyDB/Yasgui/blob/4086f8ba5281e2781488dd83e1e2cc4af775cdc2/packages/yasqe/grammar/build.sh">proof</a></sup>
+        </td>
+    </tr><tr>
+        <td><a href="https://jena.apache.org/">Apache Jena</a></td>
+        <td>SPARQL</td>
+        <td></td>
+        <td><a href="https://javacc.github.io/javacc/">JavaCC</a>
+        <sup class="screenonly"><a href="https://github.com/apache/jena/blob/3b6fb69d4ef78f4f130235a8fccb853291ea2b47/jena-arq/src/main/java/org/apache/jena/sparql/lang/sparql_10/SPARQLParser10.java">proof</a></sup>
+        </td>
+    </tr><tr>
+        <td><a href="https://github.com/oxigraph/oxigraph">Oxigraph</a></td>
+        <td>SPARQL</td>
+        <td></td>
+        <td><a href="https://github.com/kevinmehall/rust-peg">rust-peg</a>
+        <sup class="screenonly"><a href="https://github.com/oxigraph/oxigraph/blob/2247319a1ff9132fd574d56db40f7178da938000/lib/spargebra/src/parser.rs#L778">proof</a></sup>
+        </td>
+    </tr><tr>
+        <td><a href="https://github.com/stardog-union/millan">Stardog - Millan</a></td>
+        <td>SPARQL</td>
+        <td></td>
+        <td><a href="https://chevrotain.io/docs/">Chevrotain</a>
+        <sup class="screenonly"><a href="https://github.com/stardog-union/millan/blob/fc0c04b1818d20c68cf7fceb41f6ba0ee8258bd5/src/sparql/BaseSparqlParser.ts">proof</a></sup>
+        </td>
+    </tr><tr>
+        <td><a href="https://virtuoso.openlinksw.com/">Virtuoso</a></td>
+        <td>SPARQL</td>
+        <td></td>
+        <td><a href="https://www.gnu.org/software/bison/">Bison</a>
+        <sup class="screenonly"><a href="https://github.com/openlink/virtuoso-opensource/blob/23cff6731d6f8f431bde314453ec07038cc62bf5/README.GIT.md#package-dependencies">proof</a></sup>
+        </td>
+    </tr><tr>
+        <td><a href="https://github.com/blazegraph/database/">Blazegraph</a></td>
+        <td>SPARQL</td>
+        <td></td>
+        <td><a href="https://javacc.github.io/javacc/">JavaCC</a>
+        <sup class="screenonly"><a href="https://github.com/blazegraph/database/blob/829ce8241ec29fddf7c893f431b57c8cf4221baf/sparql-grammar/src/main/java/com/bigdata/rdf/sail/sparql/ast/sparql.jj">proof</a></sup>
+        </td>
+    </tr><tr>
+        <td><a href="https://www.ontotext.com/products/graphdb/">GraphDB</a></td>
+        <td>SPARQL</td>
+        <td><a href="https://rdf4j.org/">RDF4J</a>
+        <sup class="screenonly"><a href="https://github.com/eclipse-rdf4j/rdf4j/tree/b33d91485502d2f5266916c0581960e41b8f28b5/core/queryparser/sparql/JavaCC">proof</a></sup>
+        </td>
+        <td><a href="https://javacc.github.io/javacc/">JavaCC</a>
+        <sup class="screenonly"><a href="https://github.com/eclipse-rdf4j/rdf4j/tree/b33d91485502d2f5266916c0581960e41b8f28b5/core/queryparser/sparql/JavaCC">proof</a></sup>
+        </td>
+    </tr>
+
+<!------------- SQL ------------------>
+    <tr>
+        <td>[DuckDB](cite:cites duckdb)</td>
+        <td>SQL</td>
+        <td></td>
+<!-- Uses bison/flex to generate lexer:
+https://github.com/duckdb/duckdb/blob/main/scripts/generate_flex.py using https://github.com/duckdb/duckdb/blob/main/third_party/libpg_query/scan.l
+Parser is generated in: https://github.com/duckdb/duckdb/blob/main/scripts/generate_grammar.py using 
+https://github.com/duckdb/duckdb/tree/main/third_party/libpg_query/grammar
+-->
+        <td><a href="https://www.gnu.org/software/bison/">Bison</a>
+        <sup class="screenonly"><a href="https://github.com/duckdb/duckdb/tree/main/third_party/libpg_query">proof</a></sup>
+        </td>
+    </tr><tr>
+        <td>PostgreSQL</td>
+        <td>SQL</td>
+        <td></td>
+        <td><a href="https://www.gnu.org/software/bison/">Bison</a>
+        <sup class="screenonly"><a href="https://github.com/postgres/postgres/blob/master/src/backend/parser/gram.y">proof</a></sup>
+        </td>
+    </tr><tr>
+        <td>SQLite</td>
+        <td>SQL</td>
+        <td></td>
+        <td><a href="https://github.com/sqlite/sqlite/blob/master/doc/lemon.html">Lemon</a>
+        <sup class="screenonly"><a href="https://github.com/sqlite/sqlite/blob/master/README.md?plain=1#L247-L253">proof</a></sup>
+        </td>
+    </tr>
+
+<!--- TODO: GraphQL ---->
+    <tr>
+        <td>GraphQL</td>
+        <td>GraphQL</td>
+        <td></td>
+        <td><a href="https://github.com/sqlite/sqlite/blob/master/doc/lemon.html">Lemon</a>
+        <sup class="screenonly"><a href="https://github.com/sqlite/sqlite/blob/master/README.md?plain=1#L247-L253">proof</a></sup>
+        </td>
+    </tr>
+<!--- TODO: GQL ---->
+    <tr>
+        <td>GraphQL</td>
+        <td>GQL</td>
+        <td></td>
+        <td><a href="https://github.com/sqlite/sqlite/blob/master/doc/lemon.html">Lemon</a>
+        <sup class="screenonly"><a href="https://github.com/sqlite/sqlite/blob/master/README.md?plain=1#L247-L253">proof</a></sup>
+        </td>
+    </tr>
+<!--- TODO: Cypher ---->
+    <tr>
+        <td>Neo4J</td>
+        <td>Cypher</td>
+        <td></td>
+        <td><a href="https://github.com/sqlite/sqlite/blob/master/doc/lemon.html">Lemon</a>
+        <sup class="screenonly"><a href="https://github.com/sqlite/sqlite/blob/master/README.md?plain=1#L247-L253">proof</a></sup>
+        </td>
+    </tr>
+
+</tbody>
+</table>
+
 
 ### AST structures (round tripping)
 
