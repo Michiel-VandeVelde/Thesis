@@ -202,10 +202,32 @@ https://github.com/duckdb/duckdb/tree/main/third_party/libpg_query/grammar
 
 ### AST structures (round tripping)
 
-Round tripping/ AST manipulation targets language tooling
+In order to support reformatting and linting, both important tools for structured languages,
+an essential property is the round tripping between the AST and string representation.
+In the case of SPARQL, both blank spaces and capitalization of keywords is irrelevant, however,
+it should not be the case that a reformatter changing indentation also changes the capitalization,
+as such, the AST should keep track of capitalization somehow, even though it is irrelevant for the language interpretation.
 
-Babel.js
+A popular tool that manipulates structured language on the AST level is [Babel](cite:cites babel), a compiler for writing next generation JavaScript.
+In order to support this rewriting approach while still providing a structured AST,
+babel uses [source-location annotations within their AST nodes](https://github.com/babel/babel/blob/master/packages/babel-parser/ast/spec.md#node-objects),
+meaning nodes can specify what range of offsets they represent in the string.
+A node can then be replaced by either by
+a _source string_ which means the specified string will replace the node when regenerating the string,
+or by _another node_ that should be auto generated.
+Auto generation generates a specific version of valid syntax,
+for example a SPARQL string literal '`a`' could be generated as `'a'`, `"a"`, `'''a'''`, or `"""a"""`.
 
+[ESLint](cite:cites eslint) is a very popular linter that also allows automatic fixes and thus operates as a rewriter. 
+The [AST used by ESLint](https://github.com/eslint/eslint/blob/main/docs/src/extend/custom-parsers.md#all-nodes)
+expects a source location identification similar to Babel, requiring it for each node.
+Unlike babel though the fixes are not applied through the AST itself but,
+using a [fixer helper](https://github.com/eslint/eslint/blob/main/lib/rules/no-var.js#L342-L344)
+that expects you to provide what range you would like to patch with what string.
+The core idea of tracking the source location does however stay the same.
+
+
+<!--
 ### Transformations?
 
 Algebra transformations are required for rewriting/ optimizations.
@@ -215,3 +237,4 @@ RDF star?
 ### Query generation(?)/ text generation (?)
 
 Might not be needed since it could be covered in AST structures.
+-->
