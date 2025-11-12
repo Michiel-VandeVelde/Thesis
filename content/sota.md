@@ -168,31 +168,29 @@ https://github.com/duckdb/duckdb/tree/main/third_party/libpg_query/grammar
         </td>
     </tr>
 
-<!--- TODO: GraphQL ---->
+<!--- GraphQL ---->
     <tr>
         <td>GraphQL</td>
         <td>GraphQL</td>
         <td></td>
-        <td><a href="https://github.com/sqlite/sqlite/blob/master/doc/lemon.html">Lemon</a>
-        <sup class="screenonly"><a href="https://github.com/sqlite/sqlite/blob/master/README.md?plain=1#L247-L253">proof</a></sup>
+        <td>hand written
+        <sup class="screenonly"><a href="https://github.com/graphql/graphql-js/blob/16.x.x/src/language/parser.ts">proof</a></sup>
         </td>
     </tr>
-<!--- TODO: GQL ---->
+<!--- GQL ---->
     <tr>
-        <td>GraphQL</td>
+        <td><a href="https://github.com/opengql/grammar">opengql grammar</a></td>
         <td>GQL</td>
         <td></td>
-        <td><a href="https://github.com/sqlite/sqlite/blob/master/doc/lemon.html">Lemon</a>
-        <sup class="screenonly"><a href="https://github.com/sqlite/sqlite/blob/master/README.md?plain=1#L247-L253">proof</a></sup>
-        </td>
+        <td>ANTLR</td>
     </tr>
-<!--- TODO: Cypher ---->
+<!--- Cypher ---->
     <tr>
-        <td>Neo4J</td>
+        <td>Neo4J (V25)</td>
         <td>Cypher</td>
         <td></td>
-        <td><a href="https://github.com/sqlite/sqlite/blob/master/doc/lemon.html">Lemon</a>
-        <sup class="screenonly"><a href="https://github.com/sqlite/sqlite/blob/master/README.md?plain=1#L247-L253">proof</a></sup>
+        <td>ANTLR
+        <sup class="screenonly"><a href="https://github.com/neo4j/neo4j/tree/c68156edf24164435ab1ac257ec633134c2887f7/community/cypher/front-end/parser/v25/parser">proof</a></sup>
         </td>
     </tr>
 
