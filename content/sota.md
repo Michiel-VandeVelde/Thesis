@@ -75,11 +75,11 @@ we repeat it here while extending their analysis to cover query languages such a
     </tr></thead>
     <tbody><tr>
         <td markdown="1">
-[Comunica](cite:cites comunica)
+[Comunica (V4.4.1)](cite:cites comunica)
 </td>
         <td>SPARQL</td>
         <td markdown="1">
-[SPARQL.js](cite:cites sparqljs)
+[SPARQL.js (V3.7.1)](cite:cites sparqljs)
 <sup class="screenonly"><a href="https://github.com/comunica/comunica/blob/94e1eacab069551590cc250074b36bce08720c4c/packages/actor-query-parse-sparql/package.json#L50">proof</a></sup>
 </td>
         <td markdown="1">
@@ -87,52 +87,52 @@ we repeat it here while extending their analysis to cover query languages such a
 <sup class="screenonly"><a href="https://github.com/RubenVerborgh/SPARQL.js/blob/13cc3d2ee4d2528b85d8b25cfbf886597dd100c1/lib/sparql.jison">proof</a></sup>
 </td>
     </tr><tr>
-        <td>[Yasgui](cite:cites yasgui)</td>
+        <td>[Yasgui (V4.0.113)](cite:cites yasgui)</td>
         <td>SPARQL</td>
         <td></td>
         <td><a href="https://www.swi-prolog.org/">SWI Prolog</a>
         <sup class="screenonly"><a href="https://github.com/TriplyDB/Yasgui/blob/4086f8ba5281e2781488dd83e1e2cc4af775cdc2/packages/yasqe/grammar/build.sh">proof</a></sup>
         </td>
     </tr><tr>
-        <td><a href="https://jena.apache.org/">Apache Jena</a></td>
+        <td><a href="https://jena.apache.org/">Apache Jena (V5.6.0)</a></td>
         <td>SPARQL</td>
         <td></td>
         <td><a href="https://javacc.github.io/javacc/">JavaCC</a>
         <sup class="screenonly"><a href="https://github.com/apache/jena/blob/3b6fb69d4ef78f4f130235a8fccb853291ea2b47/jena-arq/src/main/java/org/apache/jena/sparql/lang/sparql_10/SPARQLParser10.java">proof</a></sup>
         </td>
     </tr><tr>
-        <td><a href="https://github.com/oxigraph/oxigraph">Oxigraph</a></td>
+        <td><a href="https://github.com/oxigraph/oxigraph">Oxigraph (V0.5.2)</a></td>
         <td>SPARQL</td>
         <td></td>
         <td><a href="https://github.com/kevinmehall/rust-peg">rust-peg</a>
         <sup class="screenonly"><a href="https://github.com/oxigraph/oxigraph/blob/2247319a1ff9132fd574d56db40f7178da938000/lib/spargebra/src/parser.rs#L778">proof</a></sup>
         </td>
     </tr><tr>
-        <td><a href="https://github.com/stardog-union/millan">Stardog - Millan</a></td>
+        <td><a href="https://github.com/stardog-union/millan">Stardog - Millan (commit 6109984)</a></td>
         <td>SPARQL</td>
         <td></td>
         <td><a href="https://chevrotain.io/docs/">Chevrotain</a>
         <sup class="screenonly"><a href="https://github.com/stardog-union/millan/blob/fc0c04b1818d20c68cf7fceb41f6ba0ee8258bd5/src/sparql/BaseSparqlParser.ts">proof</a></sup>
         </td>
     </tr><tr>
-        <td><a href="https://virtuoso.openlinksw.com/">Virtuoso</a></td>
+        <td><a href="https://virtuoso.openlinksw.com/">Virtuoso (commit 23cff67)</a></td>
         <td>SPARQL</td>
         <td></td>
         <td><a href="https://www.gnu.org/software/bison/">Bison</a>
         <sup class="screenonly"><a href="https://github.com/openlink/virtuoso-opensource/blob/23cff6731d6f8f431bde314453ec07038cc62bf5/README.GIT.md#package-dependencies">proof</a></sup>
         </td>
     </tr><tr>
-        <td><a href="https://github.com/blazegraph/database/">Blazegraph</a></td>
+        <td><a href="https://github.com/blazegraph/database/">Blazegraph (commit 829ce82)</a></td>
         <td>SPARQL</td>
         <td></td>
         <td><a href="https://javacc.github.io/javacc/">JavaCC</a>
         <sup class="screenonly"><a href="https://github.com/blazegraph/database/blob/829ce8241ec29fddf7c893f431b57c8cf4221baf/sparql-grammar/src/main/java/com/bigdata/rdf/sail/sparql/ast/sparql.jj">proof</a></sup>
         </td>
     </tr><tr>
-        <td><a href="https://www.ontotext.com/products/graphdb/">GraphDB</a></td>
+        <td><a href="https://www.ontotext.com/products/graphdb/">GraphDB (V11.0)</a></td>
         <td>SPARQL</td>
-        <td><a href="https://rdf4j.org/">RDF4J</a>
-        <sup class="screenonly"><a href="https://github.com/eclipse-rdf4j/rdf4j/tree/b33d91485502d2f5266916c0581960e41b8f28b5/core/queryparser/sparql/JavaCC">proof</a></sup>
+        <td><a href="https://rdf4j.org/">RDF4J (V5)</a>
+        <sup class="screenonly"><a href="https://graphdb.ontotext.com/documentation/11.0/architecture-components.html#architecture-and-components">proof</a></sup>
         </td>
         <td><a href="https://javacc.github.io/javacc/">JavaCC</a>
         <sup class="screenonly"><a href="https://github.com/eclipse-rdf4j/rdf4j/tree/b33d91485502d2f5266916c0581960e41b8f28b5/core/queryparser/sparql/JavaCC">proof</a></sup>
@@ -140,8 +140,8 @@ we repeat it here while extending their analysis to cover query languages such a
     </tr>
 
 <!------------- SQL ------------------>
-    <tr>
-        <td>[DuckDB](cite:cites duckdb)</td>
+<tr>
+        <td>[DuckDB (V1.4.2)](cite:cites duckdb)</td>
         <td>SQL</td>
         <td></td>
 <!-- Uses bison/flex to generate lexer:
@@ -153,36 +153,38 @@ https://github.com/duckdb/duckdb/tree/main/third_party/libpg_query/grammar
         <sup class="screenonly"><a href="https://github.com/duckdb/duckdb/tree/main/third_party/libpg_query">proof</a></sup>
         </td>
     </tr><tr>
-        <td>PostgreSQL</td>
+        <td>PostgreSQL (V18)</td>
         <td>SQL</td>
         <td></td>
         <td><a href="https://www.gnu.org/software/bison/">Bison</a>
-        <sup class="screenonly"><a href="https://github.com/postgres/postgres/blob/master/src/backend/parser/gram.y">proof</a></sup>
+        <sup class="screenonly"><a href="https://github.com/postgres/postgres/blob/877a024902a73732d9f976804aee9699dcbe1d90/src/backend/parser/gram.y">proof</a></sup>
         </td>
     </tr><tr>
-        <td>SQLite</td>
+        <td>SQLite (V3.51.0)</td>
         <td>SQL</td>
         <td></td>
         <td><a href="https://github.com/sqlite/sqlite/blob/master/doc/lemon.html">Lemon</a>
-        <sup class="screenonly"><a href="https://github.com/sqlite/sqlite/blob/master/README.md?plain=1#L247-L253">proof</a></sup>
+        <sup class="screenonly"><a href="https://github.com/sqlite/sqlite/blob/7efded5edccb28a950f18bea099599887fba96ff/README.md?plain=1#L247-L253">proof</a></sup>
         </td>
     </tr>
 
 <!--- GraphQL ---->
-    <tr>
-        <td>GraphQL</td>
+<tr>
+        <td>GraphQL (V16.12.0)</td>
         <td>GraphQL</td>
         <td></td>
         <td>hand written
-        <sup class="screenonly"><a href="https://github.com/graphql/graphql-js/blob/16.x.x/src/language/parser.ts">proof</a></sup>
+        <sup class="screenonly"><a href="https://github.com/graphql/graphql-js/blob/e2457b33e928f4ec8b22e96a6dc6cb2808c03dfa/src/language/parser.ts">proof</a></sup>
         </td>
     </tr>
 <!--- GQL ---->
     <tr>
-        <td><a href="https://github.com/opengql/grammar">opengql grammar</a></td>
+        <td><a href="https://github.com/opengql/grammar">opengql grammar (V1.9.0)</a></td>
         <td>GQL</td>
         <td></td>
-        <td>ANTLR</td>
+        <td>ANTLR
+        <sup class="screenonly"><a href="https://github.com/opengql/grammar/tree/16ea71bd320ad07fd2c46a3066afbaef7d226922">proof</a></sup>
+        </td>
     </tr>
 <!--- Cypher ---->
     <tr>
