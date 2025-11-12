@@ -1,5 +1,5 @@
 ## performance analysis
 {:#perf}
 
-Copied from Comunica paper. Might not be needed since only minimal benchmarking is possible,
-and typically negligible against query execution times.  
+Comparison with sparql.js with and without warmup.
+Can be very short, just to show we do not pay a ridiculous cost for the modularity.

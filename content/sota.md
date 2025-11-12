@@ -204,9 +204,13 @@ https://github.com/duckdb/duckdb/tree/main/third_party/libpg_query/grammar
 
 Round tripping/ AST manipulation targets language tooling
 
+Babel.js
+
 ### Transformations?
 
 Algebra transformations are required for rewriting/ optimizations.
+
+RDF star?
 
 ### Query generation(?)/ text generation (?)
 

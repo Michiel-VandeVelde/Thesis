@@ -13,9 +13,11 @@ Why is do you see this issue in sparql? separation between the data model and qu
 What parsers do we support ourselves? Link to the proof of extension we did in Comunica?
 -->
 
+
 The [SPARQL query language](cite:cites spec:sparqllang) is the de facto standard to query [RDF](cite:cites spec:rdf) data.
 Recent work shows that many SPARQL dialects exist, covering different extensions or limitations related to the standard,
-and projects this practical heterogeneity to become larger [](cite:cites modular-parsing).
+and projects this practical heterogeneity to increase as the RDF 1.2 working group enters its
+[maintenance mode](https://github.com/w3c/sparql-dev/issues/32#issuecomment-2621209920) [](cite:cites modular-parsing).
 Virtuoso extends SPARQL with full text search capabilities [](cite:cites virtuoso-full-text-search),
 Apache Jena adds support for constructing quads [](cite:cites jena-construct-quad),
 and Oxigraph provides an additional build in function, `adjust` [](cite:cites oxigraph-adjust).
@@ -34,8 +36,9 @@ Their idea is essentially to introduce an indirection layer in your grammar defi
 meaning that the declaration of a rule, consisting of subrules and tokens, is done based on identifiers of the rules.
 The identifiers of those rules are only replaced with the actual implementation of the rules when you compile/ build the parser.
 By cleverly defining an API that links rule identifiers with rule implementations, one creates a composable parser.
-Additionally, a parser only gets you the Abstract Syntax Tree (AST) or Concrete Syntax Tree (CST) [](cite:cites alfred2007compilers),
-while query engines operate on a higher level, namely the [SPARQL Algebra](cite:cites spec:sparqllang).
+A parser only gets you the Abstract Syntax Tree (AST) or Concrete Syntax Tree (CST) [](cite:cites alfred2007compilers),
+while query engines operate on a higher level, namely the [SPARQL Algebra](cite:cites spec:sparqllang),
+so additional transformations are required after parsing.
 The SPARQL specification describes how to translate the AST into these algebraic operations.
 Query evaluation and optimization relies on the manipulation of these algebraic operations,
 and [SPARQL federation](cite:cites spec:sparqlfed) relies on the conversion of algebra operations to query strings.
@@ -47,8 +50,21 @@ Since SPARQL queries are structured languages often created or read by humans, s
 it makes sense that they benefit from similar tools such as editors, code highlighting, linters, and reformatting.
 Some of these tools rely on a property called round tripping, meaning you can convert the query string into an AST,
 perform changes to a node, and the conversion back only changes that changed node, keeping everything else the same.
-An example would be the expansion of the variable _'s'_ to _'subject'_ in `SelECT_*_{_?s__?p_?o_}`
-while not changing the capitalisation or spacing to `SelECT_*_{_?subject__?p_?o_}`. 
+An example reformatting would be the expansion of the variable _'s'_ to _'subject'_ in `SelECT_*_{_?s__?p_?o_}`
+without changing other parts of the query.
+Such an expansion would result in `SelECT_*_{_?subject__?p_?o_}`. 
+[](#representations) provides a schematic overview of these different representations of a query.
+
+<figure id="representations">
+<img src="img/traqula-representations.svg" alt="Visual representation of the interface" style="object-fit: contain;"/>
+<figcaption markdown="block">
+Schematic representation of various representations of an algebraically equivalent SPARQL 1.1 query and a transformation to a 1.2 query.
+A query can be represented as structured language which both end-user and SPARQL endpoints use.
+Parsing that representation provides you with the AST representation, which is a structured representation of the language used by linters and formatters.
+The AST can be transformed to an algebra representation which is used by query engines, it provides a higher level of abstraction than the AST.
+Transformations exist within the layer, and the choice of what layer to transform in is based on the level of precision or abstraction required. 
+</figcaption>
+</figure>
 
 In order to handle the heterogeneity of SPARQL,
 which is projected to only increase with the adoption of [RDF 1.2](cite:cites rdf-1-2) and the [subsequent maintenance mode](https://github.com/w3c/sparql-dev/issues/32#issuecomment-2621209920) of the RDF 1.2 workgroup [](cite:cites modular-parsing).

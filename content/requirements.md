@@ -7,7 +7,19 @@ SQL also has heterogeneity but this does not cause them many issues since data i
 The data model onto which SPARQL operates has data integration by design.
 Semantic web provides capability to integrate data from different sources
 
+<!-- TODO: add drawing about federation -->
+
 ### Round tripping 
+
+Editor tooling / linter
 
 
 ### Web-based
+
+
+High cost to get data from JS to webasm
+
+
+### Strong core
+
+Core needs to provide facilitation for other query languages too
