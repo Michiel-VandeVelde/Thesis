@@ -1,6 +1,9 @@
 ## Requirements
 {:#requirements}
 
+Traqula has been created in order to cover some specific requirements, in this section we list the most important ones.
+
+
 ### Modularity
 
 SQL also has heterogeneity but this does not cause them many issues since data integration is not a core task for them.
