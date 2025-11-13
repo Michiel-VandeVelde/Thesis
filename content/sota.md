@@ -62,6 +62,7 @@ Since an analysis of used methods to create query language parsers is relevant,
 we repeat it here while extending their analysis to cover query languages such as
 [SQL](cite:cites iso-sql), [GraphQL](cite:cites spec:graphql), [GQL](cite:cites iso-gql), and [Neo4J's cypher](cite:cites neo4j).
 
+<figure id="parsers" class="table">
 
 <table>
     <thead><tr>
@@ -193,8 +194,12 @@ https://github.com/duckdb/duckdb/tree/main/third_party/libpg_query/grammar
 </tbody>
 </table>
 
+<figcaption markdown="block">
+List of different query software components, covering various query languages, listing their parsing software and how the parser is created.
+</figcaption>
+</figure>
 
-This table clearly shows that parser generators are the most popular approach, concretely 12 systems out of the 14 listed,
+[](#parsers) clearly shows that parser generators are the most popular approach, concretely 12 systems out of the 14 listed,
 while only one implementation uses a handwritten parser, and another one uses a parser toolkit.
 We can conclude parsers are rarely created with modularity and customizability in mind. 
 A clear example of this is DuckDB, which uses a parser based on the PostgreSQL parser and therefore copied the entire grammar definition.
