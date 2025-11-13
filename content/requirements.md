@@ -30,8 +30,8 @@ exists exactly to allow SPARQL endpoints to describe their supported features an
 <figcaption markdown="block">
 Schematic representation of federated querying in a heterogeneous SPARQL landscape.
 The user query is written in SPARQL 1.2 and uses the builtin ADJUST function that is not specified in the SPARQL specification,
-but still supported by [some engines](cite:cites oxigraph).
-The endpoints being queried however, vary in SPARQL version, RDF profile, and supported language features. 
+but still supported by [some engines](cite:cites oxigraph-adjust).
+The endpoints being queried however, vary in SPARQL version, [RDF profile](cite:cites rdf-1-2), and supported language features. 
 </figcaption>
 </figure>
 
@@ -43,17 +43,53 @@ generator, and algebra representation/manipulation library.
 By harnessing the modularity of both Traqula and Comunica,
 the authors have been able to assist in the standardization of SPARQL 1.2.
 
-### Round tripping 
+### Round tripping
+
+By now I have talked about this too much... should be scrambled...
 
 Editor tooling / linter
 
 
 ### Web-based
 
+Developing using Web-Based technologies such as
+[JavaScript](https://ecma-international.org/publications-and-standards/standards/ecma-262/) or
+[WebAssembly (WASM)](https://webassembly.org/) allows software to be executed in many environments,
+natively in a browser, or on a server using [Node.js](https://nodejs.org/en), [Bun](https://bun.sh/), [Deno](https://deno.com/), etc.
+You can access the code within your favorite web-based frontend framework like
+[React](https://react.dev/), [Vue](https://vuejs.org/), [Svelte](https://svelte.dev/), etc;
+and run your frontend as an application using [Electron](https://www.electronjs.org/) or [Tauri](https://tauri.app/).
+In short, choosing to develop using Web-Based technologies keeps many doors open, allowing for a wide adoption.
 
-High cost to get data from JS to webasm
+<!--
+"Optimalisatie van sorteringsalgortimes in query engines gebruik makend van WebAssembly": https://lib.ugent.be/fulltxt/RUG01/003/150/197/RUG01-003150197_2023_0001_AC.pdf
+https://libstore.ugent.be/fulltxt/RUG01/003/063/185/RUG01-003063185_2022_0001_AC.pdf
+Overhead in module instantiation time (minimal) and Overhead in communication (also minimal)
+Prev work says that for sorting, a list of 100 elements already makes it worth the sort in WASM (linear data transfer cost vs n log(n) sort cost).
+
+Interestingly, prev work states that a big problem is the inherent [memory limitation of WASM](https://www.w3.org/TR/wasm-js-api-2/#limits).
+However, the recently released WASM 2.0 has 64-bit memory support, increasing the storage capacity from 4GB to 16GB.
+More issues on WASM memory management: https://github.com/WebAssembly/design/issues/1397
+-->
+
+Since many programming languages can be compiled to WASM,
+including Rust using [wasm-pack](https://github.com/drager/wasm-pack),
+C++ using [Emscripten](https://emscripten.org/),
+and even JavaScript using [Javy](https://github.com/bytecodealliance/javy?tab=readme-ov-file),
+our options on programming language are still wide open.
 
 
-### Strong core
+### Generic Core
 
-Core needs to provide facilitation for other query languages too
+<!--
+https://www.w3.org/TR/shacl/#document-outline
+> The syntax of SHACL is RDF.
+-->
+
+Since Traqula aims to tackle query language heterogeneity issues,
+it should provide tools that are sufficiently generic so that they can be used for the implementation of other modular parsers,
+generators and transformers.
+As such, Traqula's SPARQL 1.1 and SPARQL 1.2 parser, generator and algebra transformations,
+all use a single core library that empowers the creation of these modular systems even for non-SPARQL query languages.
+A particular interesting case would be the [SHACL Compact Syntax](cite:cites shacl-1-2-cs) grammar shares many similarities with SPARQL,
+yet is completely distinct.

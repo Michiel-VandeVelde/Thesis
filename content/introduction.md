@@ -93,6 +93,8 @@ both using the CommonJS (CJS, legacy) format and ECMAScript Modules (ESM, modern
 Traqula, and its various components are publicly available on GitHub and the npm package manager
 under the open-source MIT software license.
 
+<span class="comment" data-author="JDS">I think it makes sense to swap sota and requirements.
+We did our investigation based on the requirements after all? We want to do abc so we looked at xyz.</span>
 <span class="comment" data-author="RT">TODO</span>
 The next section.... 
 
