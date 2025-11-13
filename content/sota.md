@@ -1,9 +1,6 @@
 ## Related Work
 {:#sota}
 
-In this section we cover the related work around parsers,
-<span class="comment" data-author="RT">Remove the rest of this sentence? I don't understand it. Or maybe just remove this sentence completely, and start with the next.</span>
-while the next one provides a detailed motivation that might shed light on why some things are deemed to be related.
 We start by looking into the related work covering parsers and compilers from a theoretical perspective,
 afterward we list the most relevant existing parsers for SPARQL and other query languages.
 After covering the parsing itself, we take a look at common AST structures, specifically when the AST needs to support round tripping.
@@ -147,7 +144,7 @@ Parser is generated in: https://github.com/duckdb/duckdb/blob/main/scripts/gener
 https://github.com/duckdb/duckdb/tree/main/third_party/libpg_query/grammar
 -->
         <td><a href="https://www.gnu.org/software/bison/">Bison</a>
-        <sup class="screenonly"><a href="https://github.com/duckdb/duckdb/tree/main/third_party/libpg_query">proof</a></sup>
+        <sup class="screenonly"><a href="https://github.com/duckdb/duckdb/tree/8d6608785487ba62129307e73be89b561f623638/third_party/libpg_query">proof</a></sup>
         </td>
     </tr><tr>
         <td>PostgreSQL (V18)</td>
@@ -197,6 +194,11 @@ https://github.com/duckdb/duckdb/tree/main/third_party/libpg_query/grammar
 </table>
 
 
+This table clearly shows that parser generators are the most popular approach, concretely 12 systems out of the 14 listed,
+while only one implementation uses a handwritten parser, and another one uses a parser toolkit.
+We can conclude parsers are rarely created with modularity and customizability in mind. 
+A clear example of this is DuckDB, which uses a parser based on the PostgreSQL parser and therefore copied the entire grammar definition.
+
 ### AST structures (round tripping)
 
 To support reformatting and linting, both important tools for structured languages,
@@ -209,7 +211,7 @@ A popular tool that manipulates structured language on the AST level is [Babel](
 To support this rewriting approach while still providing a structured AST,
 Babel uses [source-location annotations within their AST nodes](https://github.com/babel/babel/blob/master/packages/babel-parser/ast/spec.md#node-objects),
 meaning nodes can specify what range of offsets they represent in the string.
-A node can then be replaced by either by
+A node can then be replaced either by
 a _source string_ which means the specified string will replace the node when regenerating the string,
 or by _another node_ that should be auto generated.
 Auto generation generates a specific version of valid syntax,

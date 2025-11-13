@@ -35,7 +35,7 @@ This diversity of the different SPARQL versions and dialects poses various chall
 
 To tackle these issues, we previously discussed how a modular parser can solve this problem, for which we provided a prototypical implementation [](cite:cites modular-parsing).
 <span class="comment" data-author="RT">This paragraph goes too deep for an introduction IMO. I would keep this for section 3.</span>
-Their <span class="comment" data-author="RT">The review process is single-blind, you can refer to "we".</span> idea is essentially to introduce an indirection layer in your grammar definitions,
+Our idea is essentially to introduce an indirection layer in the grammar definitions,
 meaning that the declaration of a rule, consisting of subrules and tokens, is done based on identifiers of the rules.
 The identifiers of those rules are only replaced with the actual implementation of the rules when you compile/ build the parser.
 By cleverly defining an API that links rule identifiers with rule implementations, one creates a composable parser.
