@@ -61,7 +61,9 @@ Such an expansion would result in `SelECT_*_{_?subject__?p_?o_}`.
 
 <span class="comment" data-author="RT">I would not talk about ASTs here in the intro. So for this figure, I think it'd be more useful to visualize a federated query across SPARQL endpoints with different versions and dialects. (and then also add a paragraph explaining all the challenges (not only parsing) around this, and how traqula can help with tackling this.)</span>
 <figure id="representations">
-<img src="img/traqula-representations.svg" alt="Visual representation of the interface" style="object-fit: contain;"/>
+<img src="img/traqula-representations.svg"
+    alt="Visual representation of the different representations of a query and arrows depicting the transitions between them"
+    style="object-fit: contain;"/>
 <figcaption markdown="block">
 Schematic representation of various representations of an algebraically equivalent SPARQL 1.1 query and a transformation to a 1.2 query.
 A query can be represented as structured language that both end-users and SPARQL endpoints use.

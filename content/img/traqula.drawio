@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64; rv:144.0) Gecko/20100101 Firefox/144.0" version="28.2.7">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64; rv:145.0) Gecko/20100101 Firefox/145.0" version="28.2.9" pages="2">
   <diagram name="representations" id="zsVgK4BcV3KdEbgBYiwQ">
     <mxGraphModel dx="1177" dy="626" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -180,6 +180,53 @@
         </mxCell>
         <mxCell id="N3OsXmKaxb-ZwLzVK01C-83" value="reformat" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
           <mxGeometry x="273" y="293" width="60" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="LLNh3DbzV9WMndgn0nPg" name="federation">
+    <mxGraphModel dx="672" dy="358" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="gcWQbSTgF4SaF3kI-4Pk-1" value="User Query&lt;br&gt;SPARQL 1.2&lt;br&gt;using ADJUST" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="340" y="100" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="gcWQbSTgF4SaF3kI-4Pk-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;curved=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;strokeWidth=4;" edge="1" parent="1" source="gcWQbSTgF4SaF3kI-4Pk-1" target="gcWQbSTgF4SaF3kI-4Pk-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gcWQbSTgF4SaF3kI-4Pk-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;strokeWidth=4;curved=1;" edge="1" parent="1" source="gcWQbSTgF4SaF3kI-4Pk-1" target="gcWQbSTgF4SaF3kI-4Pk-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gcWQbSTgF4SaF3kI-4Pk-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;curved=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;strokeWidth=4;" edge="1" parent="1" source="gcWQbSTgF4SaF3kI-4Pk-1" target="gcWQbSTgF4SaF3kI-4Pk-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gcWQbSTgF4SaF3kI-4Pk-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;curved=1;strokeWidth=4;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="gcWQbSTgF4SaF3kI-4Pk-1" target="gcWQbSTgF4SaF3kI-4Pk-12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gcWQbSTgF4SaF3kI-4Pk-2" value="" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#ffe6cc;strokeColor=default;shadow=0;fillStyle=zigzag-line;" vertex="1" parent="1">
+          <mxGeometry x="200" y="240" width="60" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="gcWQbSTgF4SaF3kI-4Pk-3" value="" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#e1d5e7;strokeColor=default;" vertex="1" parent="1">
+          <mxGeometry x="320" y="240" width="60" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="gcWQbSTgF4SaF3kI-4Pk-4" value="" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=default;fillStyle=zigzag-line;" vertex="1" parent="1">
+          <mxGeometry x="440" y="240" width="60" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="gcWQbSTgF4SaF3kI-4Pk-9" value="&lt;div&gt;SPARQL 1.1&lt;/div&gt;Supports ADJUST" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=top;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="180" y="317" width="100" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="gcWQbSTgF4SaF3kI-4Pk-10" value="SPARQL 1.2 basic" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=top;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="300" y="317" width="100" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="gcWQbSTgF4SaF3kI-4Pk-11" value="&lt;div&gt;SPARQL 1.2&lt;/div&gt;Supports ADJUST" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=top;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="420" y="317" width="100" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="gcWQbSTgF4SaF3kI-4Pk-12" value="" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#ffe6cc;strokeColor=default;" vertex="1" parent="1">
+          <mxGeometry x="560" y="240" width="60" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="gcWQbSTgF4SaF3kI-4Pk-13" value="SPARQL 1.1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=top;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="555" y="317" width="70" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

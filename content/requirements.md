@@ -26,9 +26,12 @@ exists exactly to allow SPARQL endpoints to describe their supported features an
 
 
 <figure id="federation">
-<img src="img/traqula-representations.svg" alt="Visual representation of the interface" style="object-fit: contain;"/>
+<img src="img/traqula-federation.svg" alt="Visual a single query that needs to be executed over vastly different sparql endpoints" style="object-fit: contain; width: 50%; margin: 0 auto;"/>
 <figcaption markdown="block">
-Schematic representation of federated querying in a heterogeneous SPARQL landscape.   
+Schematic representation of federated querying in a heterogeneous SPARQL landscape.
+The user query is written in SPARQL 1.2 and uses the builtin ADJUST function that is not specified in the SPARQL specification,
+but still supported by [some engines](cite:cites oxigraph).
+The endpoints being queried however, vary in SPARQL version, RDF profile, and supported language features. 
 </figcaption>
 </figure>
 
