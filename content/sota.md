@@ -1,10 +1,11 @@
 ## Related Work
 {:#sota}
 
-In this section we cover the related work,
+In this section we cover the related work around parsers,
+<span class="comment" data-author="RT">Remove the rest of this sentence? I don't understand it. Or maybe just remove this sentence completely, and start with the next.</span>
 while the next one provides a detailed motivation that might shed light on why some things are deemed to be related.
-We start by looking into the related work covering parsers/compilers from a theoretical perspective,
-afterward we list some existing parsers for SPARQL and other query languages.
+We start by looking into the related work covering parsers and compilers from a theoretical perspective,
+afterward we list the most relevant existing parsers for SPARQL and other query languages.
 After covering the parsing itself, we take a look at common AST structures, specifically when the AST needs to support round tripping.
 
 ### Parsers
@@ -53,7 +54,7 @@ The actual programmatic definition of the different parsing steps can happen in 
    and similarly miss out on certain optimizations that could be possible in hand-built parsers.
 
 We will go on to argue that parser-building toolkits provide a nice middle ground between both generated parsers,
-and hand-build parser while still providing excellent execution times according to the performed benchmark
+and hand-built parser while still providing excellent execution times according to the performed benchmark
 [(TODO: footnote)](https://chevrotain.io/performance/).
 
 ### Existing SPARQL/SQL parsers

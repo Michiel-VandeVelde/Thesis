@@ -13,26 +13,29 @@ Why is do you see this issue in sparql? separation between the data model and qu
 What parsers do we support ourselves? Link to the proof of extension we did in Comunica?
 -->
 
+<span class="comment" data-author="RT">General comment: I like the start of the intro, but after the first paragraph, I don't find it as strong anymore. I actually like the intro of your previous paper much more. It might make sense to follow the paragraph structure of that one.</span>
 
-The [SPARQL query language](cite:cites spec:sparqllang) is the de facto standard to query [RDF](cite:cites spec:rdf) data.
-Recent work shows that many SPARQL dialects exist, covering different extensions or limitations related to the standard,
-and projects this practical heterogeneity to increase as the RDF 1.2 working group enters its
-[maintenance mode](https://github.com/w3c/sparql-dev/issues/32#issuecomment-2621209920) [](cite:cites modular-parsing).
-Virtuoso extends SPARQL with full-text search capabilities [](cite:cites virtuoso-full-text-search),
+The [SPARQL query language](cite:cites spec:sparqllang) is the standard for querying over [RDF](cite:cites spec:rdf) data.
+In practise, many SPARQL dialects exist, covering different extensions or limitations related to the standard.
+For example, Virtuoso extends SPARQL with full-text search capabilities [](cite:cites virtuoso-full-text-search),
 Apache Jena adds support for constructing quads [](cite:cites jena-construct-quad),
-and Oxigraph provides an additional built-in function, `adjust` [](cite:cites oxigraph-adjust).
-Furthermore, some query engines/ [SPARQL endpoints](cite:cites spec:sparqlprot) might limit the SPARQL language as
-to remove known expensive operators such as OPTIONAL [](cite:cites querycomplexity).
+and Oxigraph provides an additional built-in function, `ADJUST` [](cite:cites oxigraph-adjust).
+Furthermore, some [SPARQL endpoints](cite:cites spec:sparqlprot) might limit the SPARQL language
+by removing expensive operators such as OPTIONAL [](cite:cites querycomplexity).
+In the near future, this heterogeneity is expected to increase even further as the RDF and SPARQL W3C Working Group enters its
+[maintenance mode](https://github.com/w3c/sparql-dev/issues/32#issuecomment-2621209920) [](cite:cites modular-parsing),
+which will deliver more rapid successions of SPARQL once SPARQL 1.2 is available.
 <!-- -->
-The diversity between the different SPARQL versions and dialects poses various challenges:
+This diversity of the different SPARQL versions and dialects poses various challenges:
 
 1. **Query evaluation**: A user query written in one version might not be executable on a SPARQL engine supporting another version.
-2. **Tooling**: Linters, formatters, and editors expect queries to be written in a certain version.
-3. **Tooling maintainability**: tools that do support multiple versions typically do so by maintaining multiple versions,
-   or one version with many conditions, making maintainability a nightmare.
+2. **Tooling**: Linters, formatters, and editors expect queries to be written in a certain SPARQL version.
+3. **Tooling maintainability**: Tools that do support multiple SPARQL versions typically do so by maintaining multiple softwaree versions,
+   or one version with many conditions, making maintainability highly challenging.
 
-To tackle these issues, previous work introduced the idea of a modular parser but did not create a full implementation [](cite:cites modular-parsing).
-Their idea is essentially to introduce an indirection layer in your grammar definitions,
+To tackle these issues, we previously discussed how a modular parser can solve this problem, for which we provided a prototypical implementation [](cite:cites modular-parsing).
+<span class="comment" data-author="RT">This paragraph goes too deep for an introduction IMO. I would keep this for section 3.</span>
+Their <span class="comment" data-author="RT">The review process is single-blind, you can refer to "we".</span> idea is essentially to introduce an indirection layer in your grammar definitions,
 meaning that the declaration of a rule, consisting of subrules and tokens, is done based on identifiers of the rules.
 The identifiers of those rules are only replaced with the actual implementation of the rules when you compile/ build the parser.
 By cleverly defining an API that links rule identifiers with rule implementations, one creates a composable parser.
@@ -46,6 +49,7 @@ For that reason, we also need a way to translate the algebra operations back int
 which can then be used to generate the appropriate query string.
 All these conversions suffer from the same problems caused by the practical heterogeneity of SPARQL.
 
+<span class="comment" data-author="RT">This also seems to go too detailed for the intro. I think we can keep this for Requirements.</span>
 Since SPARQL queries are structured languages often created or read by humans, similar to programming languages,
 it makes sense that they benefit from similar tools such as editors, code highlighting, linters, and reformatting.
 Some of these tools rely on a property called round tripping, meaning you can convert the query string into an AST,
@@ -55,6 +59,7 @@ without changing other parts of the query.
 Such an expansion would result in `SelECT_*_{_?subject__?p_?o_}`.
 [](#representations) provides a schematic overview of these different representations of a query.
 
+<span class="comment" data-author="RT">I would not talk about ASTs here in the intro. So for this figure, I think it'd be more useful to visualize a federated query across SPARQL endpoints with different versions and dialects. (and then also add a paragraph explaining all the challenges (not only parsing) around this, and how traqula can help with tackling this.)</span>
 <figure id="representations">
 <img src="img/traqula-representations.svg" alt="Visual representation of the interface" style="object-fit: contain;"/>
 <figcaption markdown="block">
@@ -66,7 +71,10 @@ Transformations exist within the layer, and the choice of what layer to transfor
 </figcaption>
 </figure>
 
+<span class="comment" data-author="RT">Important: make sure to explain clearly what the delta is between this paper and the previous one.</span>
+
 To handle the heterogeneity of SPARQL,
+<span class="comment" data-author="RT">The remainder is a repetition of what's mentioned before.</span>
 which is projected to only increase with the adoption of [RDF 1.2](cite:cites rdf-1-2) and the [subsequent maintenance mode](https://github.com/w3c/sparql-dev/issues/32#issuecomment-2621209920) of the RDF 1.2 workgroup [](cite:cites modular-parsing).
 There is a need for a modular SPARQL parser, generator, and algebra transformation toolkit.
 In this paper we introduce _Traqula_, a modular toolkit that already supports [SPARQL 1.1](cite:cites spec:sparqllang) and [SPARQL 1.2](cite:cites sparql-1-2).
@@ -76,12 +84,14 @@ Traqula aims to allow researchers and practitioners to:
 2. increase maintainability of language tools, including the parsers, generator, and algebra transformers across different SPARQL versions, and
 3. open the path for future query formatting/ rewriting tools based on round-tripping.
 
+<span class="comment" data-author="RT">The following is for the implementation section.</span>
 Traqula is implemented in the TypeScript programming language,
 and can also be used in JavaScript/ECMAScript,
 both using the CommonJS (CJS, legacy) format and ECMAScript Modules (ESM, modern) format.
 Traqula, and its various components are publicly available on GitHub and the npm package manager
 under the open-source MIT software license.
 
+<span class="comment" data-author="RT">TODO</span>
 The next section.... 
 
 <!--
