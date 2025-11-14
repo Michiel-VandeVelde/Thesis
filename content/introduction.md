@@ -52,7 +52,7 @@ All these conversions suffer from the same problems caused by the practical hete
 <span class="comment" data-author="RT">This also seems to go too detailed for the intro. I think we can keep this for Requirements.</span>
 Since SPARQL queries are structured languages often created or read by humans, similar to programming languages,
 it makes sense that they benefit from similar tools such as editors, code highlighting, linters, and reformatting.
-Some of these tools rely on a property called round tripping, meaning you can convert the query string into an AST,
+Some of these tools rely on a property called round-tripping, meaning you can convert the query string into an AST,
 perform changes to a node, and the conversion back only changes that changed node, keeping everything else the same.
 An example of reformatting would be the expansion of the variable _'s'_ to _'subject'_ in `SelECT_*_{_?s__?p_?o_}`
 without changing other parts of the query.

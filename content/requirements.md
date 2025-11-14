@@ -1,8 +1,12 @@
 ## Requirements
 {:#requirements}
 
-Traqula has been created to cover some specific requirements; in this section we list the most important ones,
-covering modularity, round-tripping generation, using web-based technologies, and being sufficiently generic to adopt other query languages.
+Traqula has been created to cover some specific requirements; in this section we list the most important ones:
+<!-- -->
+1. Modularity: allowing you to compose your system out of small components and allowing you to change those components. 
+2. Round-tripping generation: allowing you to parse into an AST and generate back to the same string; when manipulations are made, only the manipulated parse change.
+3. Web-based: harnessing web technologies to maximize relevance and enable wide adoption.
+4. Generic core: by providing a generic core, Traqula facilitate the support of other query languages.
 
 
 ### Modularity
@@ -38,12 +42,12 @@ The endpoints being queried however, vary in SPARQL version, [RDF profile](cite:
 Besides the potential to mitigate the heterogeneity issue,
 modularity also allows researchers and practitioners to rapidly test new language features.
 Traqula has already served its purpose in this regard.
-The modular query framework **Comunica has already been adopted to use Traqula** as its parser,
+The modular query framework Comunica has already been adopted to use Traqula as its parser,
 generator, and algebra representation/manipulation library.
 By harnessing the modularity of both Traqula and Comunica,
 the authors have been able to assist in the standardization of SPARQL 1.2.
 
-### Round tripping
+### Round-tripping
 
 By now I have talked about this too much... should be scrambled...
 

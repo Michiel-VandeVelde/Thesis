@@ -3,7 +3,7 @@
 
 We start by looking into the related work covering parsers and compilers from a theoretical perspective,
 afterward we list the most relevant existing parsers for SPARQL and other query languages.
-After covering the parsing itself, we take a look at common AST structures, specifically when the AST needs to support round tripping.
+After covering the parsing itself, we take a look at common AST structures, specifically when the AST needs to support round-tripping.
 
 ### Parsers
 
@@ -66,7 +66,7 @@ we repeat it here while extending their analysis to cover query languages such a
 
 <table>
     <thead><tr>
-        <th>Software Package</th><th>Query Language</th><th>Parsing Software</th><th>Parser Generator</th>
+        <th>Software Package</th><th>Query Language</th><th>Parsing Software</th><th>Parser Constructed Using</th>
     </tr></thead>
     <tbody><tr>
         <td markdown="1">
@@ -195,24 +195,30 @@ https://github.com/duckdb/duckdb/tree/main/third_party/libpg_query/grammar
 </table>
 
 <figcaption markdown="block">
-List of different query software components, covering various query languages, listing their parsing software and how the parser is created.
+List of different query software packages covering various query languages.
+For each software component we list the software on which they depend to perform the parsing (blank in case they parse themselves); the last column lists how the parser is constructed.
 </figcaption>
 </figure>
 
 [](#parsers) clearly shows that parser generators are the most popular approach, concretely 12 systems out of the 14 listed,
-while only one implementation uses a handwritten parser, and another one uses a parser toolkit.
-We can conclude parsers are rarely created with modularity and customizability in mind. 
-A clear example of this is DuckDB, which uses a parser based on the PostgreSQL parser and therefore copied the entire grammar definition.
+while only one implementation uses a handwritten parser, and another one uses a parser toolkit, namely Chevrotain.
+Even though some parser builders support composability,
+like though [ANTLR's grammar imports](https://github.com/antlr/antlr4/blob/857fb46e781ce9c40249b9f0156c67051cec12c1/doc/grammars.md#grammar-imports),
+both those work on parser granularity, and not rule granularity.
+Specifically, parsers can be extended similar to an OOP class extension,
+but rules cannot be deleted, nor can a patched rule still reference the original implementation.
+Furthermore, all parser builder require a compile step, and most parser builders only provide a CST,
+necessitating a tree walk to create the AST, the task of parsing to an AST in two.
 
-### AST structures (round tripping)
+### AST structures (round-tripping)
 
 To support reformatting and linting, both important tools for structured languages,
-an essential property is the round tripping between the AST and string representation.
+an essential property is the round-tripping between the AST and string representation.
 In the case of SPARQL, both blank spaces and capitalization of keywords are irrelevant; however,
 it should not be the case that a reformatter changing indentation also changes the capitalization,
 as such, the AST should keep track of capitalization somehow, even though it is irrelevant for the language interpretation.
 
-A popular tool that manipulates structured language on the AST level is [Babel](cite:cites babel), a compiler for writing next-generation JavaScript.
+A popular tool that manipulates structured language on the AST level is [Babel](cite:cites babel), a compiler for writing next-generation JavaScript, which allows you to write one of JavaScript and compile/ transpile it to another version, empowering you to write new JavaScript and execute it on old environments. 
 To support this rewriting approach while still providing a structured AST,
 Babel uses [source-location annotations within their AST nodes](https://github.com/babel/babel/blob/master/packages/babel-parser/ast/spec.md#node-objects),
 meaning nodes can specify what range of offsets they represent in the string.
