@@ -82,6 +82,53 @@ The importance of the type rules will be further discussed in [TODO]() and plays
 
 ### Transformers
 
+One of Traqula's goals is to facilitate the creation of translations between different query languages, whether they are completely different or just dialects.
+This translation/ compilation/ transpilation will enable federated querying to overcome the problems they face in a heterogeneous query environment.
+In order to facilitate this transformation on different levels for different languages,
+Traqula exposes a versatile, yet optimized generic transformer/ visitor.
+The transformer facilitates the transformation process by having an API that dynamically changes to reflect
+the AST/algebra you want to manipulate by harnessing generics using TypeScripts strong (turing complete) type system.
+Similar to rewriting,
+the transformer facilitates the reformatting process since reformatting can be considered a transformation on AST level between the same AST types.
+
+To utilize the provided transformer, simply create a new transformer object, with optional default transformation contexts,
+and declaring the types your AST contains.
+You can guide the transformation process by registering _'preVisitors'_ that return a transformation context;
+allowing you to:
+<!-- -->
+1. shortcut, stopping the discovery of to be transformed nodes;
+2. continue, continuing the search for nodes to transform within the descendants;
+3. ignore keys, allowing you to specify which keys of the current node should not be visited;
+4. shallow keys, declare which keys should only be shallowly copied;
+5. copy, state that the current node should be copied. 
+<!-- -->
+Using the preVisitor, the transformer builds a stack of _'to be transformed nodes'_,
+an element is transformed once it is popped from that stack; meaning the descendants have been transformed already.
+[](#transformer) shows an example algebraic transformation that wraps a 'distinct' around the first project it finds.
+
+
+<figure id="transformer">
+<pre><code class="language-typescript" style="background: unset">new TransformerTyped&lt;Sparql11Nodes&gt;()
+    .transformNode({
+        type: Algebra.Types.SLICE,
+        input: {
+            type: Algebra.Types.PROJECT,
+            input: {
+            type: Algebra.Types.JOIN,
+            input: [{ type: Algebra.Types.PROJECT }, { type: Algebra.Types.BGP }],
+            },
+        },
+        }, {
+        [Algebra.Types.PROJECT]: {
+            preVisitor: () => ({ continue: false }),
+            transform: projection => algebraFactory.createDistinct(projection),
+        },
+    });</code></pre>
+<figcaption markdown="block">
+Example transformation wrapping a 'distinct' node around the first 'project' node within the node provided as a first argument of the transformer function.
+</figcaption>
+</figure>
+
 
 
 ### Monorepo/ modules
