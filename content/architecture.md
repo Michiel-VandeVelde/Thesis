@@ -131,7 +131,15 @@ Example transformation wrapping a 'distinct' node around the first 'project' nod
 
 
 
-### Monorepo/ modules
+### Modules
 
-Why do we need this? How does it help uw - independent evolution of software components
-
+In order to maximize independent evolution, Traqula exists as many small interlinked packages, instead of a single bloated package.
+As a user of Traqula, that means you need only depend on what you actually mean.
+For example, if you only need parsing for SPARQL 1.1,
+you just depend on _'@traqula/parser-sparql-1-1'_,
+allowing you to ignore that we also maintain a parser for SPARQL 1.2, or that Traqula also has generators etc.
+The architectural decision away from monoliths is typical, especially when modularity is of high importance.
+Modularity also forces Traqula's various package API's to be sufficiently open for extensions,
+since traqula itself needs to go through those same package APIs.
+In order to keep Traqula maintainable from a version control perspective, it is managed in a single Git/ GitHub repository under the Comunica organisation:
+[https://github.com/comunica/traqula](https://github.com/comunica/traqula).
