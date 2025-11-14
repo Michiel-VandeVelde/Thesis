@@ -60,7 +60,7 @@ Developing using Web-Based technologies such as
 [JavaScript](https://ecma-international.org/publications-and-standards/standards/ecma-262/) or
 [WebAssembly (WASM)](https://webassembly.org/) allows software to be executed in many environments,
 natively in a browser, or on a server using [Node.js](https://nodejs.org/en), [Bun](https://bun.sh/), [Deno](https://deno.com/), etc.
-You can access the code within your favorite web-based frontend framework like
+You can access the code within your favourite web-based frontend framework like
 [React](https://react.dev/), [Vue](https://vuejs.org/), [Svelte](https://svelte.dev/), etc;
 and run your frontend as an application using [Electron](https://www.electronjs.org/) or [Tauri](https://tauri.app/).
 In short, choosing to develop using Web-Based technologies keeps many doors open, allowing for a wide adoption.
@@ -94,6 +94,7 @@ Since Traqula aims to tackle query language heterogeneity issues,
 it should provide tools that are sufficiently generic so that they can be used for the implementation of other modular parsers,
 generators and transformers.
 As such, Traqula's SPARQL 1.1 and SPARQL 1.2 parser, generator and algebra transformations,
-all use a single core library that empowers the creation of these modular systems even for non-SPARQL query languages.
-A particular interesting case would be the [SHACL Compact Syntax](cite:cites shacl-1-2-cs) grammar shares many similarities with SPARQL,
-yet is completely distinct.
+all use a single core library that empowers the creation of these modular systems, even for non-SPARQL query languages.
+A particular interesting case would be the
+[SHACL Compact Syntax developed as part of W3C's Data Shapes working group](cite:cites shacl-1-2-cs),
+whose grammar shares many similarities with SPARQL, yet is completely distinct.

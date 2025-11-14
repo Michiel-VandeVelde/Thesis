@@ -2,18 +2,20 @@
 {:#architecture}
 
 The concept of our core architecture for parser has been explained in [our previous work](cite:cites modular-parsing).
-In this work, we go into more detail on the actual implemented architecture in Traqula and extend the vision towards generation and transformation.
+In this work, we go into more detail on the actual implemented architecture in Traqula and extend the vision towards
+indirected generation and generic indirection.
 
 ### Loose coupling through indirection
 
 The core idea of Traqula is to introduce a level of indirection when declaring your parser, generator or generic indirection.
-This in done by declaring modular components and accessing them through a named index.
+This is done by declaring modular components and accessing them through a named index.
 For example, when you define your transformation functions, instead of defining a function and calling that function,
 you define an indirection component using a name and an anonymous function as implementation.
-The anonymous function gets some task specific helpers which depend on the task performed, and are listed in [](#task-helpers).
+The anonymous function gets some task-specific helpers which depend on the task performed, and are listed in [](#task-helpers).
 It should be noted that all indirection tasks have the `SUBRULE` helper to call an indirected function.
 The result of this first anonymous function should be another function that gets the execution context (similar to `this`),
-and some function specific parameters.
+and some function-specific parameters.
+<span class="todo">add a small example listing - can be left: component; right: builder</span>
 
 <figure id="task-helpers" class="table">
 
@@ -56,24 +58,25 @@ It should be noted that all parser indirection rules are provided by the [Chevro
 
 ### Builder pattern
 
-In the previous section we introduced the concept of indirection,
-in this section we describe how this indirection map should be managed,
-namely though a task specific [builder](https://refactoring.guru/design-patterns/builder).
+In the previous section, we introduced the concept of indirection,
+in this section, we describe how this indirection map should be managed,
+namely, through a task specific [builder](https://refactoring.guru/design-patterns/builder).
 A builder is a software design pattern that helps you create complex objects,
 by describing the creation step by step.
 Traqula's core library manages three builders, a parser-, generation-, and indirection-builder, which all have the same functionality:
 
-- **create**: creates a builder either as a copy from another builder, from a list of initial rules. 
+- **create**: creates a builder either as a copy from another builder, or from a list of initial rules.
 - **widen context**: widens the type of the context (alternative to `this`) for all rules in the builder.
-- **type patch**: patch the type (TypeScript specific) of a collection of rules, allows you to change the type API of the builder after an invasive patch. 
+- **type patch**: patch the type (TypeScript specific) of a collection of rules, allows you to change the type API of the builder after an invasive patch.
 - **patch rule**: patches a single already registered rule with a new implementation.
 - **add rule**: add a single new rule.
 - **add many**: add a collection of new rules.
 - **delete rule**: delete a single rule from the builder.
 - **get rule**: get the indirection component registered under some name.
-When types have been changed, or context widened, the returned component will reflect these changes. 
+  When types have been changed, or context widened, the returned component will reflect these changes.
 - **merge**: Merge this builder with another one, changing this builder.
-- **build**: Build a single parser, generator or generic indirection object from the given builder.
+  (somewhat comparable to [ANTLR's import](https://github.com/antlr/antlr4/blob/857fb46e781ce9c40249b9f0156c67051cec12c1/doc/grammars.md#grammar-imports))
+- **build**: Build a single parser, generator, or generic indirection object from the given builder.
 
 The importance of the type rules will be further discussed in [TODO]() and plays a vital rule in the maintainability of your modular system.
 
