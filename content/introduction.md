@@ -30,7 +30,7 @@ This diversity of the different SPARQL versions and dialects poses various chall
 
 1. **Query evaluation**: A user query written in one version might not be executable on a SPARQL engine supporting another version.
 2. **Tooling**: Linters, formatters, and editors expect queries to be written in a certain SPARQL version.
-3. **Tooling maintainability**: Tools that do support multiple SPARQL versions typically do so by maintaining multiple softwaree versions,
+3. **Tooling maintainability**: Tools that do support multiple SPARQL versions typically do so by maintaining multiple software versions,
    or one version with many conditions, making maintainability highly challenging.
 
 To tackle these issues, we previously discussed how a modular parser can solve this problem, for which we provided a prototypical implementation [](cite:cites modular-parsing).

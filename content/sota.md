@@ -203,12 +203,11 @@ For each software component we list the software on which they depend to perform
 [](#parsers) clearly shows that parser generators are the most popular approach, concretely 12 systems out of the 14 listed,
 while only one implementation uses a handwritten parser, and another one uses a parser toolkit, namely Chevrotain.
 Even though some parser builders support composability,
-like though [ANTLR's grammar imports](https://github.com/antlr/antlr4/blob/857fb46e781ce9c40249b9f0156c67051cec12c1/doc/grammars.md#grammar-imports),
-both those work on parser granularity, and not rule granularity.
+like though [ANTLR's grammar imports](https://github.com/antlr/antlr4/blob/857fb46e781ce9c40249b9f0156c67051cec12c1/doc/grammars.md#grammar-imports), they do so using parser granularity, and not rule granularity.
 Specifically, parsers can be extended similar to an OOP class extension,
 but rules cannot be deleted, nor can a patched rule still reference the original implementation.
 Furthermore, all parser builder require a compile step, and most parser builders only provide a CST,
-necessitating a tree walk to create the AST, the task of parsing to an AST in two.
+necessitating a tree walk to create the AST, splitting the task of parsing to an AST in two.
 
 ### AST structures (round-tripping)
 
@@ -218,7 +217,8 @@ In the case of SPARQL, both blank spaces and capitalization of keywords are irre
 it should not be the case that a reformatter changing indentation also changes the capitalization,
 as such, the AST should keep track of capitalization somehow, even though it is irrelevant for the language interpretation.
 
-A popular tool that manipulates structured language on the AST level is [Babel](cite:cites babel), a compiler for writing next-generation JavaScript, which allows you to write one of JavaScript and compile/ transpile it to another version, empowering you to write new JavaScript and execute it on old environments. 
+A popular tool that manipulates structured language on the AST level is [Babel](cite:cites babel), a compiler for writing next-generation JavaScript,
+which allows you to write one of JavaScript and compile/ transpile it to another version, empowering you to write new JavaScript and execute it on old environments. 
 To support this rewriting approach while still providing a structured AST,
 Babel uses [source-location annotations within their AST nodes](https://github.com/babel/babel/blob/master/packages/babel-parser/ast/spec.md#node-objects),
 meaning nodes can specify what range of offsets they represent in the string.

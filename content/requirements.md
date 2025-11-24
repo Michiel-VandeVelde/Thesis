@@ -4,15 +4,15 @@
 Traqula has been created to cover some specific requirements; in this section we list the most important ones:
 <!-- -->
 1. Modularity: allowing you to compose your system out of small components and allowing you to change those components. 
-2. Round-tripping generation: allowing you to parse into an AST and generate back to the same string; when manipulations are made, only the manipulated parse change.
+2. Round-tripping generation: allowing you to parse into an AST and generate back to the same string; when manipulations are made, only the manipulated parts change.
 3. Web-based: harnessing web technologies to maximize relevance and enable wide adoption.
-4. Generic core: by providing a generic core, Traqula facilitate the support of other query languages.
+4. Generic core: by providing a generic core, Traqula facilitates the support of many query languages.
 
 
 ### Modularity
 
 The required modularity of Traqula is grounded in both existing and future heterogeneity of the SPARQL language.
-The SPARQL language already knows many dialects of the SPARQL 1.1 query language,
+SPARQL already knows many dialects of the SPARQL 1.1 query language,
 and the practical heterogeneity is expected to grow even more
 as the SPARQL 1.2 specification is being finalized and the working group prepares for
 maintenance mode; which will allow for a more rapid evaluation of the SPARQL language specification [](cite:cites modular-parsing).

@@ -108,22 +108,22 @@ an element is transformed once it is popped from that stack; meaning the descend
 
 
 <figure id="transformer">
-<pre><code class="language-typescript" style="background: unset">new TransformerTyped&lt;Sparql11Nodes&gt;()
-    .transformNode({
-        type: Algebra.Types.SLICE,
-        input: {
-            type: Algebra.Types.PROJECT,
-            input: {
-            type: Algebra.Types.JOIN,
-            input: [{ type: Algebra.Types.PROJECT }, { type: Algebra.Types.BGP }],
-            },
-        },
-        }, {
-        [Algebra.Types.PROJECT]: {
-            preVisitor: () => ({ continue: false }),
-            transform: projection => algebraFactory.createDistinct(projection),
-        },
-    });</code></pre>
+<pre style="overflow: auto"><code class="language-typescript" style="background: unset; font-size: 0.8em">new TransformerTyped&lt;Sparql11Nodes&gt;()
+  .transformNode({
+    type: Algebra.Types.SLICE,
+    input: {
+      type: Algebra.Types.PROJECT,
+      input: {
+        type: Algebra.Types.JOIN,
+        input: [{ type: Algebra.Types.PROJECT }, { type: Algebra.Types.BGP }],
+      },
+    },
+  }, {
+    [Algebra.Types.PROJECT]: {
+      preVisitor: () => ({ continue: false }),
+      transform: projection => algebraFactory.createDistinct(projection),
+    },
+  });</code></pre>
 <figcaption markdown="block">
 Example transformation wrapping a 'distinct' node around the first 'project' node within the node provided as a first argument of the transformer function.
 </figcaption>
@@ -133,8 +133,8 @@ Example transformation wrapping a 'distinct' node around the first 'project' nod
 
 ### Modules
 
-In order to maximize independent evolution, Traqula exists as many small interlinked packages, instead of a single bloated package.
-As a user of Traqula, that means you need only depend on what you actually mean.
+In order to maximize independent evolution, Traqula exists as many small interlinked packages, instead of a single big package that does it all.
+As a user of Traqula, that means you need only depend on what you actually need.
 For example, if you only need parsing for SPARQL 1.1,
 you just depend on _'@traqula/parser-sparql-1-1'_,
 allowing you to ignore that we also maintain a parser for SPARQL 1.2, or that Traqula also has generators etc.
