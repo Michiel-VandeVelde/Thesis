@@ -1,3 +1,10 @@
 h2.noBefore:before {
   content: '';
 }
+
+
+@media print {
+  #federation img {
+    width: 50%
+  }
+}
