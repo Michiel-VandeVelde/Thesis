@@ -12,3 +12,25 @@ h2.noBefore:before {
     display: none !important;
   }
 }
+
+#parsers .reqCheck {
+  text-wrap: nowrap !important;
+}
+
+#parsers {
+  .n::before {
+    content: '·';
+    text-wrap: nowrap !important;
+    //color: red !important;
+  }
+  .s::before {
+    content: '⭘';
+    text-wrap: nowrap !important;
+    color: orange !important;
+  }
+  .y::before {
+    content: '✔';
+    text-wrap: nowrap !important;
+    color: green !important;
+  }
+}
