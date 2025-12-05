@@ -9,7 +9,7 @@ h2.noBefore:before {
   }
 
   #traqula-bench img , #traqula-bench img {
-    width: 80%;
+    width: 70%;
   }
 
   .screenonly {
@@ -37,4 +37,9 @@ h2.noBefore:before {
     text-wrap: nowrap !important;
     color: green !important;
   }
+}
+
+code {
+  padding: 0 !important;
+  overflow-y: clip;
 }
