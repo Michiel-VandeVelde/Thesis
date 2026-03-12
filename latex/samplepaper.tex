@@ -19,41 +19,56 @@
 %\renewcommand\UrlFont{\color{blue}\rmfamily}
 %\urlstyle{rm}
 %
+\usepackage{url}
+
 \begin{document}
 %
-\title{Contribution Title}
+\title{Traqula: Providing a Foundation for The Evolving SPARQL Ecosystem Through Modular Query Parsing, Transformation, and Generation}
 %
 %\titlerunning{Abbreviated paper title}
 % If the paper title is too long for the running head, you can set
 % an abbreviated paper title here
 %
-\author{First Author\inst{1}\orcidID{0000-1111-2222-3333} \and
-Second Author\inst{2,3}\orcidID{1111-2222-3333-4444} \and
-Third Author\inst{3}\orcidID{2222--3333-4444-5555}}
+\author{Jitse De Smet\inst{1}\orcidID{0009-0002-6513-5013} \and
+Ruben Taelman\inst{1}\orcidID{0000-0001-5118-256X}}
 %
-\authorrunning{F. Author et al.}
+\authorrunning{J. De Smet and R. Taelman}
 % First names are abbreviated in the running head.
 % If there are more than two authors, 'et al.' is used.
 %
-\institute{Princeton University, Princeton NJ 08544, USA \and
-Springer Heidelberg, Tiergartenstr. 17, 69121 Heidelberg, Germany
-\email{lncs@springer.com}\\
-\url{http://www.springer.com/gp/computer-science/lncs} \and
-ABC Institute, Rupert-Karls-University Heidelberg, Heidelberg, Germany\\
-\email{\{abc,lncs\}@uni-heidelberg.de}}
+\institute{IDLab, Department of Electronics and Information Systems, Ghent University – imec.
+\email{\{firstname\}.\{lastname\}@ugent.be}}
 %
 \maketitle              % typeset the header of the contribution
 %
 \begin{abstract}
-The abstract should briefly summarize the contents of the paper in
-150--250 words.
 
-\keywords{First keyword  \and Second keyword \and Another keyword.}
+    SPARQL engines continue to diverge in the versions and language extensions they support. With SPARQL 1.2 nearing completion and the working group’s plans toward future maintenance, this divergence is likely to grow. As a result, language tools that aim to support multiple SPARQL versions and dialects face increasing maintenance costs. Furthermore, areas such as SPARQL federation become harder to manage. To address these challenges, we introduce Traqula, a modular TypeScript-based framework for parsing, transforming, and generating SPARQL queries. This article presents Traqula’s architecture and its builder-based dependency-injection design, and we show how these components provide modular support for SPARQL 1.1 and 1.2 parsing and generation. Traqula enables round-tripping, supports generic algebraic and AST transformations, and delivers significantly faster parsing compared to current JavaScript-based SPARQL parsing. Traqula’s modular architecture enables flexible experimentation for researchers, and it is production-ready thanks to extensive testing and modern development techniques. Looking forward, Traqula lays the groundwork for supporting additional query languages, developing generic rewriting modules for SPARQL federation engines, and building robust tooling for an increasingly diverse SPARQL ecosystem.
+
+\keywords{SPARQL, query \and algebra \and modularity \and parser \and generator}
 \end{abstract}
 %
 %
 %
-\section{First Section}
+\section{Introduction}
+
+The SPARQL query language~\cite{spec:sparqllang} is the standard way to query RDF~\cite{spec:rdf} data.
+While SPARQL endpoints~\cite{spec:sparqlprot} are commonly used to expose Knowledge Graphs through a highly expressive query API,
+alternative APIs have been proposed~\cite{tpf,smartkg,sage,wisekg,brtpf,passage} that offer different trade-offs between client and server effort for query execution.
+This heterogeneity in server APIs introduces challenges when executing federated SPARQL queries~\cite{spec:sparqlfed,fedx,hibiscus,splendid,hanski_wikidata_federation_2025} over multiple of these APIs.
+While this API-based heterogeneity has been an active field of research~\cite{comunica,heterogeneous_lars,heterogeneous_fedqpl,heterogeneous_replicas} in recent years,
+the heterogeneity of the SPARQL language itself lacks understanding.
+In practice, many SPARQL dialects exist~\cite{geosparql,tsparql,csparql,rdfversioningquerylang} each introducing their own extensions or limitations.
+Virtuoso, for example, extends SPARQL with full-text search capabilities \cite{virtuoso-full-text-search},
+Apache Jena adds support for constructing quads \cite{jena-construct-quad},
+and Oxigraph provides an additional built-in function, \texttt{ADJUST} \cite{sparql-adjust,oxigraph-adjust}.
+Furthermore, some SPARQL endpoints might limit the SPARQL language
+by removing expensive operators such as OPTIONAL \cite{querycomplexity}.
+In the near future, this heterogeneity is expected to increase even further as the RDF and SPARQL W3C Working Group enters its
+maintenance mode \cite{rdf12-charter,modular-parsing},
+which could deliver more rapid successions of SPARQL once SPARQL 1.2 is finalized.
+As a result, the growing diversity of SPARQL versions and dialects introduces several challenges:
+
 \subsection{A Subsection Sample}
 Please note that the first paragraph of a section or subsection is
 not indented. The first paragraph that follows a table, figure,
@@ -147,27 +162,6 @@ Company X and owns stock in Company Y. Author C is a member of committee Z.
 % BibTeX users should specify bibliography style 'splncs04'.
 % References will then be sorted and formatted in the correct style.
 %
-% \bibliographystyle{splncs04}
-% \bibliography{mybibliography}
-%
-\begin{thebibliography}{8}
-\bibitem{ref_article1}
-Author, F.: Article title. Journal \textbf{2}(5), 99--110 (2016)
-
-\bibitem{ref_lncs1}
-Author, F., Author, S.: Title of a proceedings paper. In: Editor,
-F., Editor, S. (eds.) CONFERENCE 2016, LNCS, vol. 9999, pp. 1--13.
-Springer, Heidelberg (2016). \doi{10.10007/1234567890}
-
-\bibitem{ref_book1}
-Author, F., Author, S., Author, T.: Book title. 2nd edn. Publisher,
-Location (1999)
-
-\bibitem{ref_proc1}
-Author, A.-B.: Contribution title. In: 9th International Proceedings
-on Proceedings, pp. 1--2. Publisher, Location (2010)
-
-\bibitem{ref_url1}
-LNCS Homepage, \url{http://www.springer.com/lncs}, last accessed 2023/10/25
-\end{thebibliography}
+\bibliographystyle{splncs04}
+\bibliography{references}
 \end{document}
