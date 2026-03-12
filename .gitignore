@@ -6,3 +6,4 @@ tmp
 output
 *.log
 *.diff
+*.aux
