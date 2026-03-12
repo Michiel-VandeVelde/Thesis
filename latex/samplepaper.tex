@@ -9,7 +9,10 @@
 % so please use T1 fonts in your manuscript whenever possible.
 % Other font encondings may result in incorrect characters.
 %
+\usepackage[utf8]{inputenc}
+\usepackage{url}
 \usepackage{graphicx}
+\usepackage{hyperref}
 % Used for displaying a sample figure. If possible, figure files should
 % be included in EPS format.
 %
@@ -19,7 +22,6 @@
 %\renewcommand\UrlFont{\color{blue}\rmfamily}
 %\urlstyle{rm}
 %
-\usepackage{url}
 
 \begin{document}
 %
@@ -51,6 +53,8 @@ Ruben Taelman\inst{1}\orcidID{0000-0001-5118-256X}}
 %
 %
 \section{Introduction}
+\label{introduction}
+
 
 The SPARQL query language~\cite{spec:sparqllang} is the standard way to query RDF~\cite{spec:rdf} data.
 While SPARQL endpoints~\cite{spec:sparqlprot} are commonly used to expose Knowledge Graphs through a highly expressive query API,
@@ -69,59 +73,69 @@ maintenance mode \cite{rdf12-charter,modular-parsing},
 which could deliver more rapid successions of SPARQL once SPARQL 1.2 is finalized.
 As a result, the growing diversity of SPARQL versions and dialects introduces several challenges:
 
-\subsection{A Subsection Sample}
-Please note that the first paragraph of a section or subsection is
-not indented. The first paragraph that follows a table, figure,
-equation etc. does not need an indent, either.
+\begin{enumerate}
+    \item \textbf{Query evaluation}: A user query written in one version might not be executable by a SPARQL engine supporting another version.
+    \item \textbf{Tooling}: Linters, formatters, editors, and language servers often assume a specific SPARQL version.
+    \item \textbf{Maintainability}: Tools that support multiple SPARQL versions typically do so by maintaining multiple software versions, or one version with many conditions, making maintainability highly challenging.
+\end{enumerate}
 
-Subsequent paragraphs, however, are indented.
-
-\subsubsection{Sample Heading (Third Level)} Only two levels of
-headings should be numbered. Lower level headings remain unnumbered;
-they are formatted as run-in headings.
-
-\paragraph{Sample Heading (Fourth Level)}
-The contribution should contain no more than four levels of
-headings. Table~\ref{tab1} gives a summary of all heading levels.
-
-\begin{table}
-\caption{Table captions should be placed above the
-tables.}\label{tab1}
-\begin{tabular}{|l|l|l|}
-\hline
-Heading level &  Example & Font size and style\\
-\hline
-Title (centered) &  {\Large\bfseries Lecture Notes} & 14 point, bold\\
-1st-level heading &  {\large\bfseries 1 Introduction} & 12 point, bold\\
-2nd-level heading & {\bfseries 2.1 Printing Area} & 10 point, bold\\
-3rd-level heading & {\bfseries Run-in Heading in Bold.} Text follows & 10 point, bold\\
-4th-level heading & {\itshape Lowest Level Heading.} Text follows & 10 point, italic\\
-\hline
-\end{tabular}
-\end{table}
-
-
-\noindent Displayed equations are centered and set on a separate
-line.
-\begin{equation}
-x + y = z
-\end{equation}
-Please try to avoid rasterized images for line-art diagrams and
-schemas. Whenever possible, use vector graphics instead (see
-Fig.~\ref{fig1}).
-
-\begin{figure}
-\includegraphics[width=\textwidth]{fig1.eps}
-\caption{A figure caption is always placed below the illustration.
-Please note that short captions are centered, while long ones are
-justified by the macro package automatically.} \label{fig1}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{img/traqula-federation}
+    \caption{The federated SPARQL query (blue) uses SPARQL 1.2 features such as triple terms and uses the non-standard builtin function ADJUST~\cite{sparql-adjust}.
+    The query targets four SPARQL endpoints, all supporting different SPARQL version, RDF profiles~\cite{rdf-1-2}, and language extensions.
+    To allow query engines to integrate this heterogeneity,
+        frameworks such as Traqula are necessary to bridge between these SPARQL dialects.}
+    \label{federation}
 \end{figure}
 
-\begin{theorem}
-This is a sample theorem. The run-in heading is set in bold, while
-the following text appears in italics. Definitions, lemmas,
-propositions, and corollaries are styled the same way.
-\end{theorem}
+
+The query evaluation problem within a heterogeneous SPARQL ecosystem becomes especially visible in federated SPARQL query execution.
+While language dialects are common in many technologies, SQL~\cite{iso-sql} being a well-known example,
+the RDF data model~\cite{spec:rdf} is explicitly designed for seamless integration of distributed datasets.
+SPARQL reflects this distributed nature through support for federated queries,
+where a single query may involve multiple endpoints, each with its own capabilities, limitations, and language features.
+
+In such a setting, a SPARQL query written in one SPARQL version or dialect may not be executable on all federation members.
+For instance, a query formulated in SPARQL 1.2 might rely on features, functions,
+or syntactic constructs that an older endpoint does not support, or that are only available as vendor-specific extensions.
+\autoref{federation} illustrates this scenario: a query is written in SPARQL 1.2 and uses the non-standard ADJUST function~\cite{sparql-adjust},
+yet the endpoints differ in their supported SPARQL versions,
+RDF profiles~\cite{rdf-1-2}, and feature sets.
+Although the SPARQL Service Description specification~\cite{spec:sparqlservicedesc} allows endpoints to declare their supported features,
+it does not offer mitigation paths to resolve these language mismatches.
+To solve this problem, there is a need for a parsing, transformation, and generation framework such as Traqula that can handle various SPARQL dialects.
+Such a framework provides a foundation for future SPARQL federation research towards new techniques and algorithms to manage these dialects.
+
+In prior work~\cite{modular-parsing},
+we introduced our vision of a modular SPARQL parser to address the growing heterogeneity of SPARQL dialects using
+builder-based dependency injection~\cite{fowler-dep-inj}.
+We envisioned a design with a prototype implementation demonstrating parser composability,
+showing how grammar modules could be combined to modularly define multiple SPARQL parsers covering different versions and dialects.
+In this article, we fully realize that vision with a complete implementation
+as well as applying the modular architecture to query generation and transformation.
+These features allow queries to be parsed, transformed, and regenerated reliably, while preserving their structure and semantics across different dialects.
+
+This article presents Traqula, a modular SPARQL toolkit implementing these ideas.
+Traqula has already been integrated into the widely used Comunica SPARQL querying framework~\cite{comunica}, demonstrating its maturity and practical applicability.
+Traqula's modular and composable architecture enables researchers and practitioners to:
+\begin{enumerate}
+    \item Experiment with grammar changes, including adding, modifying, or removing rules;
+    \item tackle the complexities of federated SPARQL querying in a heterogeneous SPARQL ecosystem; and
+    \item lay the foundation for future query formatting and rewriting tools.
+\end{enumerate}
+Traqula is implemented in TypeScript and is available as open-source software under the MIT license on
+GitHub and npm,
+providing the community with a robust and flexible resource for building tools and engines for a heterogeneous SPARQL environment.
+
+
+The remainder of this paper is structured as follows.
+\autoref{requirements} details the requirements of Traqula, \autoref{sota} reviews related work,
+\autoref{architecture} presents the high-level architecture of Traqula,
+and \autoref{implementation} discusses its implementation.
+\autoref{perf} evaluates its performance, and \autoref{conclusion} concludes the paper.
+
+
 %
 % the environments 'definition', 'lemma', 'proposition', 'corollary',
 % 'remark', and 'example' are defined in the LLNCS documentclass as well.

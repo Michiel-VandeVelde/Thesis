@@ -1,6 +1,9 @@
 #!/bin/bash
 #!/bin/bash
-pdflatex -interaction=nonstopmode samplepaper.tex
+
+inkscape --export-type=pdf /img/*.svg
+
+pdflatex --shell-escape -interaction=nonstopmode samplepaper.tex
 bibtex samplepaper
-pdflatex -interaction=nonstopmode samplepaper.tex
-pdflatex -interaction=nonstopmode samplepaper.tex
+pdflatex --shell-escape -interaction=nonstopmode samplepaper.tex
+pdflatex --shell-escape -interaction=nonstopmode samplepaper.tex
