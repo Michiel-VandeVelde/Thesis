@@ -1,0 +1,7 @@
+services:
+  web:
+    image: ghcr.io/jitsedesmet/2026-eswc-demo-traqula:latest
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - 127.0.0.1:8080:80

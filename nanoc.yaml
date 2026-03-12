@@ -22,7 +22,7 @@ data_sources:
 
 checks:
   internal_links:
-    exclude: []
+    exclude: ['paper\.pdf']
   external_links:
     exclude: []
     exclude_files: []

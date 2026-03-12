@@ -34,9 +34,18 @@ jobs:
           bundler-cache: true
 
       - name: Install and Build 🔧
+        run: bundle exec nanoc
+
+      - name: Check 🔍
+        run: bundle exec nanoc check internal_links mixed_content stale
+
+      - name: Generate PDF 📄
         run: |
-          bundle exec nanoc compile
-          bundle exec nanoc check internal_links mixed_content stale
+          google-chrome --headless --no-sandbox --disable-gpu --disable-dev-shm-usage \
+            --no-pdf-header-footer \
+            --print-to-pdf=output/paper.pdf \
+            "file://$(pwd)/output/index.html"
+
       - name: Upload artifact
         # Automatically uploads an artifact from the './_site' directory by default
         uses: actions/upload-pages-artifact@v3

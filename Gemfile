@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gem 'nanoc', '~> 4.7'
 
-gem 'scholarmarkdown'
+gem 'scholarmarkdown', '>= 3.3.0'
 
 # text processing
 gem 'kramdown'
@@ -19,11 +19,12 @@ gem 'citeproc-ruby', '>= 1.1.6'
 gem 'csl-styles'
 
 group :development do
+  gem 'rake'
   # live view
   gem 'guard-nanoc', '~> 2.1.2'
   gem 'guard-rack'
   gem 'guard-livereload'
-  gem 'rack', '~> 3.0.9.1'
+  gem 'rack'
   gem 'rackup'
   gem 'rack-livereload'
   gem 'wdm', '>= 0.1.0' if Gem.win_platform?
@@ -35,3 +36,5 @@ group :test do
   # validation
   gem 'w3c_validators', '~> 1.3.1'
 end
+
+gem "csv", "~> 3.3"
