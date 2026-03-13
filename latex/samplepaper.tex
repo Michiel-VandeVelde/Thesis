@@ -5,7 +5,6 @@
 \documentclass[runningheads]{llncs}
 %
 \usepackage[T1]{fontenc}
-%\usepackage[activate={true,nocompatibility},final,kerning=true,spacing=true,stretch=10,shrink=10]{microtype}
 % T1 fonts will be used to generate the final print and online PDFs,
 % so please use T1 fonts in your manuscript whenever possible.
 % Other font encondings may result in incorrect characters.
@@ -31,10 +30,7 @@
 %
 
 \begin{document}
-%    \setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
-%    \setlength{\floatsep}{6pt plus 2pt minus 2pt}
-%    \setlength{\abovecaptionskip}{4pt plus 1pt minus 1pt}
-%    \setlength{\belowcaptionskip}{1pt}
+    \setlist[enumerate]{noitemsep, topsep=0pt}
 %
     \title{Traqula: Providing a Foundation for The Evolving SPARQL Ecosystem Through Modular Query Parsing, Transformation, and Generation}
 %
@@ -72,9 +68,9 @@
         \keywords{SPARQL \and query \and algebra \and modularity \and parser \and generator}
 
         \textbf{Canonical version}: \href{https://traqula-resource.jitsedesmet.be/}{https://traqula-resource.jitsedesmet.be/} \\
-        \textbf{Resource type}: software package \\
-        \textbf{Licence}: MIT \\
-        \textbf{DOI}: \href{https://zenodo.org/records/17793334}{10.5281/zenodo.17793334} \\
+        \textbf{Resource type}: software package \and
+        \textbf{Licence}: MIT \and
+        \textbf{DOI}: \href{https://zenodo.org/records/17793334}{10.5281/zenodo.17793334} \and
         \textbf{URL}: \href{https://github.com/comunica/traqula}{https://github.com/comunica/traqula}
     \end{abstract}
 %
@@ -108,7 +104,7 @@
         \item \textbf{Maintainability}: Tools that support multiple SPARQL versions typically do so by maintaining multiple software versions, or one version with many conditions, making maintainability highly challenging.
     \end{enumerate}
 
-    \begin{figure}[tbp]
+    \begin{figure}[t]
         \centering
         \includegraphics[width=0.50\textwidth]{img/traqula-federation}
         \caption{The federated SPARQL query (blue) uses SPARQL 1.2 features such as triple terms and uses the non-standard builtin function ADJUST~\cite{sparql-adjust}.
@@ -116,6 +112,7 @@
         To allow query engines to integrate this heterogeneity,
             frameworks such as Traqula are necessary to bridge between these SPARQL dialects.}
         \label{federation}
+        \vspace{-12pt}
     \end{figure}
 
     The query evaluation problem within a heterogeneous SPARQL ecosystem becomes especially visible in federated SPARQL query execution.
@@ -174,8 +171,6 @@
         \item \textbf{Web-based}: harnessing web technologies and enabling execution within and outside browsers, to ensure wide usability.
         \item \textbf{Language-agnostic}: by providing a generic core, Traqula facilitates the support of many query languages.
     \end{enumerate}
-
-    We elaborate on each of these requirements in more detail hereafter.
 
     \subsection{Flexibility}
 
@@ -340,7 +335,7 @@
     We can clearly see that parser generators are the dominant approach, with 13 of the 16 systems listed using generated parsers.
     Only one implementation uses a handwritten parser, and two employ a parser toolkit, namely Chevrotain.
 
-    \begin{table}[tbp]
+    \begin{table}[t]
         \label{parsers}
         \centering
         \newcolumntype{L}{>{\raggedright\arraybackslash}X<{\hspace{4pt}}}
@@ -391,6 +386,7 @@ Neo4J (v25)~\cite{neo4j} & Cypher & ANTLR & Generated & $\sim$ $\times$ $\sim$ $
             \textit{language agnosticism (L)}.
             Each requirement is marked as fully met ($\checkmark$), partially met ($\sim$), or not met ($\times$);
             question marks indicate uncertainty.}
+        \vspace{-30pt}
     \end{table}
 
     Some parser generators support limited flexibility through grammar composition.
@@ -491,6 +487,7 @@ export const iri: SparqlRule<'iri', TermIri> = {
         The use of \textit{'SUBRULE'} reflects the same \textit{name-based lookup} shown in the left figure,
             delegating execution to the implementations registered under the names \texttt{iriFull} and \texttt{prefixedIri}.}
         \label{rulemap}
+        \vspace{-12pt}
     \end{figure}
 
     To manage and share these rule dictionaries, Traqula adopts the
@@ -522,6 +519,7 @@ const specialIriGenerator = GeneratorBuilder
         \caption{Construction of a 'special IRI generator' based on an existing builder for building a IRI generator,
             patching it with an alternative rule implementation for the \textit{'prefixedIri'} rule.}
         \label{builder}
+        \vspace{-12pt}
     \end{figure}
 
     \subsection{Modular Packages}
@@ -656,6 +654,17 @@ const transformed = new TransformerTyped<Sparql11Nodes>()
     \section{Performance analysis}
     \label{perf}
 
+    \begin{figure}[tbp]
+        \centering
+        \includegraphics[width=0.7\textwidth]{img/boxplots}
+        \caption{Variance of execution times (ms) for Traqula's SPARQL 1.1 and 1.2 parsers,
+            when parsing 50 real world SPARQL 1.1 queries~\cite{dbpedia-bench} using different configurations.
+            Parsing SPARQL 1.2 is always slightly slower than parsing SPARQL 1.1 due to increased grammar complexity,
+            and source tracking or algebra transformation further increase effort.}
+        \label{traqula-bench}
+        \vspace{-12pt}
+    \end{figure}
+
     While the primary focus of Traqula is flexibility and expressivity,
     sufficient performance is still important in broadly used software tools.
     As such, we evaluate the execution-time performance of Traqula, comparing its different parsing modes,
@@ -675,21 +684,11 @@ const transformed = new TransformerTyped<Sparql11Nodes>()
     We also carried out these same experiments for the 199 manually curated SPARQL 1.1 queries within Traqula's unit tests and reach the same conclusions.
     For space reasons, we omit these results from this paper.
 
-    Despite these relative execution time increases, \autoref{traqula-bench} shows Traqula remains substantially faster than existing solutions.
+    Despite these relative execution time increases, \autoref{traqula-sparqljs} shows Traqula remains substantially faster than existing solutions.
     The mean execution time for parsing into an AST using Traqula is 2.5 ms, compared to 23.93 ms for SPARQL.js, a 957.2\% difference,
     even though Traqula generates a more complete and correct AST.
     Parsing into algebra shows a similar trend: Traqula takes 3.64 ms, while SPARQLAlgebra.js (using SPARQL.js) requires 24.04 ms, a 660.4\% difference.
     Much of this advantage can be attributed to the performance of Chevrotain, the parser toolkit underlying Traqula.
-
-    \begin{figure}[tbp]
-        \centering
-        \includegraphics[width=0.7\textwidth]{img/boxplots}
-        \caption{Variance of execution times (ms) for Traqula's SPARQL 1.1 and 1.2 parsers,
-            when parsing 50 real world SPARQL 1.1 queries~\cite{dbpedia-bench} using different configurations.
-            Parsing SPARQL 1.2 is always slightly slower than parsing SPARQL 1.1 due to increased grammar complexity,
-            and source tracking or algebra transformation further increase effort.}
-        \label{traqula-bench}
-    \end{figure}
 
     Finally, it is important to recognise the cost associated with using a parser toolkit in a non-pre-compiled language like TypeScript.
     Traqula's underlying parser toolkit, Chevrotain, performs its parser optimizations at runtime, making parser construction computationally expensive.
@@ -707,6 +706,7 @@ const transformed = new TransformerTyped<Sparql11Nodes>()
         when parsing 50 real-world SPARQL 1.1 queries~\cite{dbpedia-bench}.
         Parsing to both an AST (green) and to algebra (orange) is significantly faster using Traqula.}
         \label{traqula-sparqljs}
+        \vspace{-12pt}
     \end{figure}
 
 
