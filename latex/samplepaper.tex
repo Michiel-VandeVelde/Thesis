@@ -5,6 +5,7 @@
 \documentclass[runningheads]{llncs}
 %
 \usepackage[T1]{fontenc}
+%\usepackage[activate={true,nocompatibility},final,kerning=true,spacing=true,stretch=10,shrink=10]{microtype}
 % T1 fonts will be used to generate the final print and online PDFs,
 % so please use T1 fonts in your manuscript whenever possible.
 % Other font encondings may result in incorrect characters.
@@ -29,352 +30,324 @@
 %\urlstyle{rm}
 %
 
-
 \begin{document}
+%    \setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
+%    \setlength{\floatsep}{6pt plus 2pt minus 2pt}
+%    \setlength{\abovecaptionskip}{4pt plus 1pt minus 1pt}
+%    \setlength{\belowcaptionskip}{1pt}
 %
-\title{Traqula: Providing a Foundation for The Evolving SPARQL Ecosystem Through Modular Query Parsing, Transformation, and Generation}
+    \title{Traqula: Providing a Foundation for The Evolving SPARQL Ecosystem Through Modular Query Parsing, Transformation, and Generation}
 %
 %\titlerunning{Abbreviated paper title}
 % If the paper title is too long for the running head, you can set
 % an abbreviated paper title here
 %
-\author{Jitse De Smet\inst{1}\orcidID{0009-0002-6513-5013} \and
-Ruben Taelman\inst{1}\orcidID{0000-0001-5118-256X}}
+    \author{Jitse De Smet\inst{1}\orcidID{0009-0002-6513-5013} \and
+    Ruben Taelman\inst{1}\orcidID{0000-0001-5118-256X}}
 %
-\authorrunning{J. De Smet and R. Taelman}
+    \authorrunning{J. De Smet and R. Taelman}
 % First names are abbreviated in the running head.
 % If there are more than two authors, 'et al.' is used.
 %
-\institute{IDLab, Department of Electronics and Information Systems, Ghent University – imec.
-\email{\{firstname\}.\{lastname\}@ugent.be}}
+    \institute{IDLab, Department of Electronics and Information Systems, Ghent University – imec.
+    \email{\{firstname\}.\{lastname\}@ugent.be}}
 %
-\maketitle              % typeset the header of the contribution
+    \maketitle              % typeset the header of the contribution
 %
-\begin{abstract}
-SPARQL engines continue to diverge in the versions and language extensions they support.
-With SPARQL 1.2 nearing completion and the working group’s plans toward future maintenance, this divergence is likely to grow.
-As a result, language tools that aim to support multiple SPARQL versions and dialects face increasing maintenance costs.
-Furthermore, areas such as SPARQL federation become harder to manage.
-To address these challenges, we introduce Traqula, a modular TypeScript-based framework for parsing, transforming, and generating SPARQL queries.
-This article presents Traqula’s architecture and its builder-based dependency-injection design,
-and we show how these components provide modular support for SPARQL 1.1 and 1.2 parsing and generation.
-Traqula enables round-tripping, supports generic algebraic and AST transformations,
-and delivers significantly faster parsing compared to current JavaScript-based SPARQL parsing.
-Traqula’s modular architecture enables flexible experimentation for researchers, and it is production-ready thanks to extensive testing and modern development techniques.
-Looking forward, Traqula lays the groundwork for supporting additional query languages,
-developing generic rewriting modules for SPARQL federation engines, and building robust tooling for an increasingly diverse SPARQL ecosystem.
+    \begin{abstract}
+        SPARQL engines continue to diverge in the versions and language extensions they support.
+        With SPARQL 1.2 nearing completion and the working group’s plans toward future maintenance, this divergence is likely to grow.
+        As a result, language tools that aim to support multiple SPARQL versions and dialects face increasing maintenance costs.
+        Furthermore, areas such as SPARQL federation become harder to manage.
+        To address these challenges, we introduce Traqula, a modular TypeScript-based framework for parsing, transforming, and generating SPARQL queries.
+        This article presents Traqula’s architecture and its builder-based dependency-injection design,
+        and we show how these components provide modular support for SPARQL 1.1 and 1.2 parsing and generation.
+        Traqula enables round-tripping, supports generic algebraic and AST transformations,
+        and delivers significantly faster parsing compared to current JavaScript-based SPARQL parsing.
+        Traqula’s modular architecture enables flexible experimentation for researchers, and it is production-ready thanks to extensive testing and modern development techniques.
+        Looking forward, Traqula lays the groundwork for supporting additional query languages,
+        developing generic rewriting modules for SPARQL federation engines, and building robust tooling for an increasingly diverse SPARQL ecosystem.
 
 
-\keywords{SPARQL \and query \and algebra \and modularity \and parser \and generator}
+        \keywords{SPARQL \and query \and algebra \and modularity \and parser \and generator}
 
-
-\textbf{Canonical version}: \href{https://traqula-resource.jitsedesmet.be/}{https://traqula-resource.jitsedesmet.be/} \\
-\textbf{Resource type}: software package \\
-\textbf{Licence}: MIT \\
-\textbf{DOI}: \href{https://zenodo.org/records/17793334}{10.5281/zenodo.17793334} \\
-\textbf{URL}: \href{https://github.com/comunica/traqula}{https://github.com/comunica/traqula}
-\end{abstract}
+        \textbf{Canonical version}: \href{https://traqula-resource.jitsedesmet.be/}{https://traqula-resource.jitsedesmet.be/} \\
+        \textbf{Resource type}: software package \\
+        \textbf{Licence}: MIT \\
+        \textbf{DOI}: \href{https://zenodo.org/records/17793334}{10.5281/zenodo.17793334} \\
+        \textbf{URL}: \href{https://github.com/comunica/traqula}{https://github.com/comunica/traqula}
+    \end{abstract}
 %
-\section{Introduction}
-\label{introduction}
+%
+%
 
 
-The SPARQL query language~\cite{spec:sparqllang} is the standard way to query RDF~\cite{spec:rdf} data.
-While SPARQL endpoints~\cite{spec:sparqlprot} are commonly used to expose Knowledge Graphs through a highly expressive query API,
-alternative APIs have been proposed~\cite{tpf,smartkg,sage,wisekg,brtpf,passage} that offer different trade-offs between client and server effort for query execution.
-This heterogeneity in server APIs introduces challenges when executing federated SPARQL queries~\cite{spec:sparqlfed,fedx,hibiscus,splendid,hanski_wikidata_federation_2025} over multiple of these APIs.
-While this API-based heterogeneity has been an active field of research~\cite{comunica,heterogeneous_lars,heterogeneous_fedqpl,heterogeneous_replicas} in recent years,
-the heterogeneity of the SPARQL language itself lacks understanding.
-In practice, many SPARQL dialects exist~\cite{geosparql,tsparql,csparql,rdfversioningquerylang} each introducing their own extensions or limitations.
-Virtuoso, for example, extends SPARQL with full-text search capabilities \cite{virtuoso-full-text-search},
-Apache Jena adds support for constructing quads \cite{jena-construct-quad},
-and Oxigraph provides an additional built-in function, \texttt{ADJUST} \cite{sparql-adjust,oxigraph-adjust}.
-Furthermore, some SPARQL endpoints might limit the SPARQL language
-by removing expensive operators such as OPTIONAL \cite{querycomplexity}.
-In the near future, this heterogeneity is expected to increase even further as the RDF and SPARQL W3C Working Group enters its
-maintenance mode \cite{rdf12-charter,modular-parsing},
-which could deliver more rapid successions of SPARQL once SPARQL 1.2 is finalized.
-As a result, the growing diversity of SPARQL versions and dialects introduces several challenges:
+    \section{Introduction}
+    \label{introduction}
 
-\begin{enumerate}
-    \item \textbf{Query evaluation}: A user query written in one version might not be executable by a SPARQL engine supporting another version.
-    \item \textbf{Tooling}: Linters, formatters, editors, and language servers often assume a specific SPARQL version.
-    \item \textbf{Maintainability}: Tools that support multiple SPARQL versions typically do so by maintaining multiple software versions, or one version with many conditions, making maintainability highly challenging.
-\end{enumerate}
+    The SPARQL query language~\cite{spec:sparqllang} is the standard way to query RDF~\cite{spec:rdf} data.
+    While SPARQL endpoints~\cite{spec:sparqlprot} are commonly used to expose Knowledge Graphs through a highly expressive query API,
+    alternative APIs have been proposed~\cite{tpf,smartkg,sage,wisekg,brtpf,passage} that offer different trade-offs between client and server effort for query execution.
+    This heterogeneity in server APIs introduces challenges when executing federated SPARQL queries~\cite{spec:sparqlfed,fedx,hibiscus,splendid,hanski_wikidata_federation_2025} over multiple of these APIs.
+    While this API-based heterogeneity has been an active field of research~\cite{comunica,heterogeneous_lars,heterogeneous_fedqpl,heterogeneous_replicas} in recent years,
+    the heterogeneity of the SPARQL language itself lacks understanding.
+    In practice, many SPARQL dialects exist~\cite{geosparql,tsparql,csparql,rdfversioningquerylang} each introducing their own extensions or limitations.
+    Virtuoso, for example, extends SPARQL with full-text search capabilities \cite{virtuoso-full-text-search},
+    Apache Jena adds support for constructing quads \cite{jena-construct-quad},
+    and Oxigraph provides an additional built-in function, \texttt{ADJUST} \cite{sparql-adjust,oxigraph-adjust}.
+    Furthermore, some SPARQL endpoints might limit the SPARQL language
+    by removing expensive operators such as OPTIONAL \cite{querycomplexity}.
+    In the near future, this heterogeneity is expected to increase even further as the RDF and SPARQL W3C Working Group enters its
+    maintenance mode \cite{rdf12-charter,modular-parsing},
+    which could deliver more rapid successions of SPARQL once SPARQL 1.2 is finalized.
+    As a result, the growing diversity of SPARQL versions and dialects introduces several challenges:
 
+    \begin{enumerate}
+        \item \textbf{Query evaluation}: A user query written in one version might not be executable by a SPARQL engine supporting another version.
+        \item \textbf{Tooling}: Linters, formatters, editors, and language servers often assume a specific SPARQL version.
+        \item \textbf{Maintainability}: Tools that support multiple SPARQL versions typically do so by maintaining multiple software versions, or one version with many conditions, making maintainability highly challenging.
+    \end{enumerate}
 
-\begin{figure}[tbp]
-\centering
-    \includegraphics[width=0.50\textwidth]{img/traqula-federation}
-    \caption{The federated SPARQL query (blue) uses SPARQL 1.2 features such as triple terms and uses the non-standard builtin function ADJUST~\cite{sparql-adjust}.
-    The query targets four SPARQL endpoints, all supporting different SPARQL version, RDF profiles~\cite{rdf-1-2}, and language extensions.
-    To allow query engines to integrate this heterogeneity,
-        frameworks such as Traqula are necessary to bridge between these SPARQL dialects.}
-    \label{federation}
-\end{figure}
+    \begin{figure}[tbp]
+        \centering
+        \includegraphics[width=0.50\textwidth]{img/traqula-federation}
+        \caption{The federated SPARQL query (blue) uses SPARQL 1.2 features such as triple terms and uses the non-standard builtin function ADJUST~\cite{sparql-adjust}.
+        The query targets four SPARQL endpoints, all supporting different SPARQL version, RDF profiles~\cite{rdf-1-2}, and language extensions.
+        To allow query engines to integrate this heterogeneity,
+            frameworks such as Traqula are necessary to bridge between these SPARQL dialects.}
+        \label{federation}
+    \end{figure}
 
+    The query evaluation problem within a heterogeneous SPARQL ecosystem becomes especially visible in federated SPARQL query execution.
+    While language dialects are common in many technologies, SQL~\cite{iso-sql} being a well-known example,
+    the RDF data model~\cite{spec:rdf} is explicitly designed for seamless integration of distributed datasets.
+    SPARQL reflects this distributed nature through support for federated queries,
+    where a single query may involve multiple endpoints, each with its own capabilities, limitations, and language features.
 
-The query evaluation problem within a heterogeneous SPARQL ecosystem becomes especially visible in federated SPARQL query execution.
-While language dialects are common in many technologies, SQL~\cite{iso-sql} being a well-known example,
-the RDF data model~\cite{spec:rdf} is explicitly designed for seamless integration of distributed datasets.
-SPARQL reflects this distributed nature through support for federated queries,
-where a single query may involve multiple endpoints, each with its own capabilities, limitations, and language features.
+    In such a setting, a SPARQL query written in one SPARQL version or dialect may not be executable on all federation members.
+    For instance, a query formulated in SPARQL 1.2 might rely on features, functions,
+    or syntactic constructs that an older endpoint does not support, or that are only available as vendor-specific extensions.
+    \autoref{federation} illustrates this scenario: a query is written in SPARQL 1.2 and uses the non-standard ADJUST function~\cite{sparql-adjust},
+    yet the endpoints differ in their supported SPARQL versions,
+    RDF profiles~\cite{rdf-1-2}, and feature sets.
+    Although the SPARQL Service Description specification~\cite{spec:sparqlservicedesc} allows endpoints to declare their supported features,
+    it does not offer mitigation paths to resolve these language mismatches.
+    To solve this problem, there is a need for a parsing, transformation, and generation framework such as Traqula that can handle various SPARQL dialects.
+    Such a framework provides a foundation for future SPARQL federation research towards new techniques and algorithms to manage these dialects.
 
+    In prior work~\cite{modular-parsing},
+    we introduced our vision of a modular SPARQL parser to address the growing heterogeneity of SPARQL dialects using
+    builder-based dependency injection~\cite{fowler-dep-inj}.
+    We envisioned a design with a prototype implementation demonstrating parser composability,
+    showing how grammar modules could be combined to modularly define multiple SPARQL parsers covering different versions and dialects.
+    In this article, we fully realize that vision with a complete implementation
+    as well as applying the modular architecture to query generation and transformation.
+    These features allow queries to be parsed, transformed, and regenerated reliably, while preserving their structure and semantics across different dialects.
 
-In such a setting, a SPARQL query written in one SPARQL version or dialect may not be executable on all federation members.
-For instance, a query formulated in SPARQL 1.2 might rely on features, functions,
-or syntactic constructs that an older endpoint does not support, or that are only available as vendor-specific extensions.
-\autoref{federation} illustrates this scenario: a query is written in SPARQL 1.2 and uses the non-standard ADJUST function~\cite{sparql-adjust},
-yet the endpoints differ in their supported SPARQL versions,
-RDF profiles~\cite{rdf-1-2}, and feature sets.
-Although the SPARQL Service Description specification~\cite{spec:sparqlservicedesc} allows endpoints to declare their supported features,
-it does not offer mitigation paths to resolve these language mismatches.
-To solve this problem, there is a need for a parsing, transformation, and generation framework such as Traqula that can handle various SPARQL dialects.
-Such a framework provides a foundation for future SPARQL federation research towards new techniques and algorithms to manage these dialects.
-
-
-In prior work~\cite{modular-parsing},
-we introduced our vision of a modular SPARQL parser to address the growing heterogeneity of SPARQL dialects using
-builder-based dependency injection~\cite{fowler-dep-inj}.
-We envisioned a design with a prototype implementation demonstrating parser composability,
-showing how grammar modules could be combined to modularly define multiple SPARQL parsers covering different versions and dialects.
-In this article, we fully realize that vision with a complete implementation
-as well as applying the modular architecture to query generation and transformation.
-These features allow queries to be parsed, transformed, and regenerated reliably, while preserving their structure and semantics across different dialects.
-
-
-This article presents Traqula, a modular SPARQL toolkit implementing these ideas.
-Traqula has already been integrated into the widely used Comunica SPARQL querying framework~\cite{comunica}, demonstrating its maturity and practical applicability.
-Traqula's modular and composable architecture enables researchers and practitioners to:
-\begin{enumerate*}[label=\arabic*.]
+    This article presents Traqula, a modular SPARQL toolkit implementing these ideas.
+    Traqula has already been integrated into the widely used Comunica SPARQL querying framework~\cite{comunica}, demonstrating its maturity and practical applicability.
+    Traqula's modular and composable architecture enables researchers and practitioners to:
+    \begin{enumerate*}[label=\arabic*.]
     \item Experiment with grammar changes, including adding, modifying, or removing rules;
     \item tackle the complexities of federated SPARQL querying in a heterogeneous SPARQL ecosystem; and
     \item lay the foundation for future query formatting and rewriting tools.
-\end{enumerate*}
-Traqula is implemented in TypeScript and is available as open-source software under the MIT license on
-GitHub and npm,
-providing the community with a robust and flexible resource for building tools and engines for a heterogeneous SPARQL environment.
+    \end{enumerate*}
+    Traqula is implemented in TypeScript and is available as open-source software under the MIT license on
+    GitHub and npm,
+    providing the community with a robust and flexible resource for building tools and engines for a heterogeneous SPARQL environment.
+
+    The remainder of this paper is structured as follows.
+    \autoref{requirements} details the requirements of Traqula, \autoref{sota} reviews related work,
+    \autoref{architecture} presents the high-level architecture of Traqula,
+    and \autoref{implementation} discusses its implementation.
+    \autoref{perf} evaluates its performance, and \autoref{conclusion} concludes the paper.
 
 
-The remainder of this paper is structured as follows.
-\autoref{requirements} details the requirements of Traqula, \autoref{sota} reviews related work,
-\autoref{architecture} presents the high-level architecture of Traqula,
-and \autoref{implementation} discusses its implementation.
-\autoref{perf} evaluates its performance, and \autoref{conclusion} concludes the paper.
+    \section{Requirements}
+    \label{requirements}
+
+    Traqula was designed with a set of concrete requirements in mind. In this section, we outline the most important ones:
+
+    \begin{enumerate}
+        \item \textbf{Flexibility}: allowing composition of parser, transformer, or generator out of small components that can be easily added, removed, or replaced.
+        \item \textbf{Round-tripping}: enable parsing into an AST and generating back to exactly the same string. When manipulations are made, only the manipulated parts change.
+        \item \textbf{Web-based}: harnessing web technologies and enabling execution within and outside browsers, to ensure wide usability.
+        \item \textbf{Language-agnostic}: by providing a generic core, Traqula facilitates the support of many query languages.
+    \end{enumerate}
+
+    We elaborate on each of these requirements in more detail hereafter.
+
+    \subsection{Flexibility}
+
+    Given the increasing heterogeneity of SPARQL versions and dialects,
+    Traqula must support a highly flexible and composable architecture.
+    As outlined in the introduction and \autoref{federation}, differences in supported features, functions,
+    and syntactic constructs already complicate query evaluation and tooling,
+    and these discrepancies are expected to grow as SPARQL enters a phase of more rapid evolution through the SPARQL working group's maintenance mode \cite{modular-parsing}.
+    Addressing this landscape requires a toolkit in which parsers, generators, and transformers can be assembled from small, reusable modules rather than fixed monolithic grammars.
+
+    Flexibility is essential for two main reasons.
+    First, researchers and practitioners need the ability to experiment with the language itself,
+    by adding, modifying, or removing grammar rules, and evaluating the impact of those changes.
+    Traqula's modular design aims to make such experimentation routine rather than burdensome,
+    supporting rapid prototyping of new language features or alternative syntactic constructs.
+    This capability has already been demonstrated in practice:
+    Traqula's adoption within the modular Comunica query engine allowed us to contribute effectively to the standardization work for SPARQL 1.2.
+
+    Second, SPARQL federation engines require a way to mediate between heterogeneous dialects of the SPARQL endpoints they federate over.
+    A single query may need to be adapted to the capabilities of multiple endpoints, each exposing different SPARQL versions or dialects.
+    Traqula's modularity is therefore not merely a convenience but a prerequisite for constructing reliable transformations between dialects,
+    since each dialect will require a parser and generator.
+    By decoupling parsing, generation, and algebraic transformation into flexible and composable components,
+    Traqula positions itself as a key tool for SPARQL rewriting across versions and dialects.
+
+    \subsection{Round-tripping}
+
+    Because SPARQL is a structured language that is both written and inspected by humans,
+    it benefits from the same ecosystem of tooling found around programming languages,
+    which includes editors, code highlighters, linters, refactoring tools, and formatters.
+    Many of these tools rely on \textit{round-tripping}, the ability to parse a query into an internal representation,
+    apply a transformation, and regenerate a query string that is identical except for the intentional change.
+    Achieving this property requires the parser and generator to preserve all user-visible details, such as comments, spacing,
+    punctuation, or keyword capitalization, even when these details have no semantic impact on query evaluation.
+
+    Round-tripping is essential for practical tooling.
+    A linter that renames a variable, for instance,
+    should not unexpectedly rewrite unrelated parts of the query or normalize stylistic elements that the user intended to keep.
+    A simple example of SPARQL reformatting is rewriting the variable \textit{'s'} to \textit{'subject'} in
+    \texttt{SelECT * \{ ?s ?p ?o \}}, which should result in \texttt{SelECT * \{ ?subject ?p ?o \}},
+    without altering the spacing or keyword casing.
+    \autoref{representations} illustrates the different representations involved:
+    the query string;
+    its abstract syntax tree (AST) as received from the parser, and used by linters and formatters;
+    and its algebraic form, constructed from the AST~\cite{spec:sparqllang}, and used by query engines.
+    Transformations may occur at any of these levels, but we only require the round-tripping property for AST-level transformations.
+
+    Supporting round-tripping therefore shapes Traqula's design.
+    The parser must retain sufficient information to reproduce the original query string, while the generator must reconstruct that structure without introducing unintended changes.
+    This requirement ensures that Traqula can serve as a foundation for reliable SPARQL editing, formatting,
+    and rewriting tools.
+
+    \begin{figure}[tbp]
+        \centering
+        \includegraphics[width=0.85\textwidth]{img/traqula-representations}
+        \caption{Various representations of an algebraically equivalent SPARQL 1.1 query and its SPARQL 1.2 counterpart.
+        The figure illustrates three layers: the concrete query string (blue), the Abstract Syntax Tree (AST, green), and the algebraic representation (orange).
+        Round-tripping requires that parsing a query string into an AST and regenerating it produces the identical string.
+        Transforming the leftmost query at the AST level preserves all syntactic information, so regenerating the transformed AST changes only those parts intentionally modified.
+        By contrast, converting the AST to algebra discards syntactic detail:
+        algebraically equivalent queries map to the same algebra and thus to the same canonicalized query string.
+        Finally, the figure shows how transformations between SPARQL 1.1 and SPARQL 1.2 can be performed at the algebra level,
+            where engines operate and where syntactic information is no longer preserved.}
+        \label{representations}
+    \end{figure}
+
+    \subsection{Web-based}
+
+    Web-based technologies offer a natural foundation for widely adoptable SPARQL tooling.
+    A Web-first JavaScript (or TypeScript after transpilation) implementation can run natively in the browser,
+    where many SPARQL editors~\cite{yasgui,sparql-editor}, and even query engines~\cite{comunica} operate,
+    while also executing on backend environments such as Node.js, Bun, or Deno,
+    and inside application frameworks like Electron or Tauri.
+    Moreover, the Web ecosystem lowers the barrier to implementing a SPARQL language server,
+    similar to Qlue-ls~\cite{qlue-ls}, via the Language Server Protocol (LSP) using Microsoft's \textit{vscode-languageserver-node}.
+    Such an LSP or more broadly any Traqula derived (system) service could directly leverage the modular architecture,
+    enabling rule-level extensibility and round-tripping capabilities within interactive editors,
+    especially since Traqula's APIs comunicate using JSON Data Transfor Objects (DTOs), which simplifying crossing language boundries.
+    In principle, WebAssembly (WASM)
+    provides the same portability, enabling code written in languages such as
+    Rust (wasm-pack),
+    C++ (Emscripten),
+    or even JavaScript (Javy) to run across the Web platform.
+
+    However, for Traqula we prioritise not only portability, but also accessibility, quick prototyping, and ease of contribution.
+    TypeScript provides the same core advantages as WASM, execution across browser and server environments,
+    while remaining far more familiar to the broad developer community,
+    and without requiring ahead-of-time compilation.
+    As the most widely used language on GitHub in 2025~\cite{github:lang-use},
+    TypeScript maximises the likelihood that researchers and practitioners can both use and extend Traqula without specialised compilation toolchains or language-specific runtimes.
+
+    By choosing a Web-based, TypeScript implementation, Traqula satisfies the requirement of broad,
+    frictionless adoption while integrating naturally into both front-end applications and backend query engines.
+
+    \subsection{Language-agnostic}
+
+    To address query language heterogeneity, Traqula provides a generic core that can be reused to implement modular parsers,
+    generators, and transformers for a variety of query languages.
+    The SPARQL 1.1 and 1.2 parser, generator, and algebra transformations all build on this single core library,
+    which enables the creation of modular systems beyond SPARQL.
+    For example, the SHACL Compact Syntax developed by W3C's Data Shapes Working Group~\cite{shacl-1-2-cs}
+    shares syntactic constructs with SPARQL, allowing it to reuse some components of Traqula's SPARQL grammar.
+    Similarly, mapping languages such as RML~\cite{rml} for Knowledge Graph constructions allow for representation in SPARQL algebra~\cite{minoo_swj_algebraicmappingoperators}.
+    Another example is the LDQL query language~\cite{ldql},
+    which enables directed web navigation for Link Traversal Query Processing~\cite{linktraversalfoundations,solidquery} over Linked Data documents.
+    In contrast, the newly standardized ISO Graph Query Language (GQL)~\cite{iso-gql} defines a completely different syntax,
+    but could still leverage Traqula's language-agnostic core to implement modular parsers,
+    generators, and transformations.
+
+    In summary, Traqula's design is guided by four core requirements:
+    flexibility, round-tripping, Web-based execution, and language-agnosticism.
+    Together, these requirements ensure that Traqula can support modular,
+    maintainable tooling for heterogeneous SPARQL dialects while remaining extensible to other query languages and deployment environments.
+    With these principles in place, we now turn to existing approaches in parser design and query language tooling to position Traqula within the broader landscape.
 
 
-\section{Requirements}
-\label{requirements}
+    \section{Related Work}
+    \label{sota}
 
+    This section first covers the related work on parsers and compilers from a theoretical perspective;
+    afterward, we list the most relevant existing parsers for SPARQL and other query languages.
+    After covering the parsing itself, we take a look at common abstract syntax tree (AST) structures,
+    specifically focussing on approaches that support round-tripping.
 
-Traqula was designed with a set of concrete requirements in mind. In this section, we outline the most important ones:
+    \subsection{Parsers}
 
-\begin{enumerate}
-    \item \textbf{Flexibility}: allowing composition of parser, transformer, or generator out of small components that can be easily added, removed, or replaced.
-    \item \textbf{Round-tripping}: enable parsing into an AST and generating back to exactly the same string. When manipulations are made, only the manipulated parts change.
-    \item \textbf{Web-based}: harnessing web technologies and enabling execution within and outside browsers, to ensure wide usability.
-    \item \textbf{Language-agnostic}: by providing a generic core, Traqula facilitates the support of many query languages.
-\end{enumerate}
+    Parsing a structured language involves transforming it from a string into a desired data structure.
+    Conceptually, parsing can be divided into three steps \cite{alfred2007compilers}:
 
+    \begin{enumerate}
+        \item \textbf{Lexical analysis} (or \textit{scanning}) performed by a \textit{lexer}: the source character stream is read and broken into non-overlapping sequences called lexemes. Each lexeme is classified by a token type, often defined using regular expressions. Lexemes may be represented as strings, ranges in the source, or both. The lexer outputs a stream or list of tokens, which are the lexeme representation together with its token type.
+        \item \textbf{Syntax analysis} (or \textit{parsing}) performed by a \textit{parser}: after having generated a 'flat' stream or list of tokens, the next part is to create a data structure, typically a tree, often called the Abstract Syntax Tree (AST), representing the syntactic structure of the language. Some parsers can automatically parse into a Concrete Syntax Tree (CST) which traces all grammar information without generalization or abstraction.
+        \item \textbf{Semantic analysis}: the AST is checked for non-structural constraints. In SPARQL, for example, the variable assigned in a \texttt{BIND} clause cannot be used in the immediately preceding tripleBlock within the same group. In programming languages, type checking is a common example of semantic analysis.
+    \end{enumerate}
 
-We elaborate on each of these requirements in more detail hereafter.
+    One example of joined execution is the case of a streaming parser where the output data structure of the parser is itself a stream.
+    Streaming parsers are specifically interesting when parsing large amounts of data,
+    where semantic analysis is either not required or required in limited form.
+    Example data formats that tailor themselves to streaming, specifically RDF data, are
+    Jelly~\cite{streaming-parsing-jelly} and n-triples~\cite{spec:n-triples}.
+    Another way of joined execution is where syntax analysis and semantic analysis are joined,
+    allowing the parser to fail fast in case a semantic constraint would be broken, an approach partially taken by Traqula.
 
+    The \textbf{parser construction technique}, i.e., the actual programmatic definition of the different parsing steps,
+    can happen in various ways; we identify the following three:
 
-\subsection{Flexibility}
+    \begin{enumerate}
+        \item \textbf{Generated}: Code generation tools come with their Domain Specific Language (DSL) that will typically share similarities with Extended Backus--Naur Form (EBNF) and some Regular Expression dialect. The build process of the software that uses the custom parser should then compile the parser definition file (in the custom DSL) to the desired target language, which is typically the same language as the software being built. Example parser generators are Bison~\cite{bison-gnu} and ANTLR~\cite{parr1995antlr}.
+        \item \textbf{Hand-built}: Code generation can come with optimization limitations, when the grammar allows for optimizations not taken by the code generator. Writing a handwritten parser is powerful but very challenging to get right, because compilers often know powerful, very specific, non-trivial optimizations. On top of programming language-specific optimizations, other powerful optimizations exist for specific sets of grammars, such as LL(1) and LL(k)~\cite{alfred2007compilers,parr1995antlr}.
+        \item \textbf{Toolkits / libraries}: A compromise between hand-built parsers and generators exists in the form of toolkits / libraries. Parser building toolkits, e.g. Chevrotain~\cite{chevrotain}, are software libraries that provide an API that facilitates the construction of parsers within a specific programming language. The benefit of constructing a parser within the programming language the parser would be called from is that the project's code can be more coherent, allowing better integration, while also providing abstraction for powerful optimizations that can be made for specific grammars such as LL(1) and LL(k). Additionally, it allows the usage of language-specific features, e.g. a type system, which are often not present in DSLs used by parser generators, since DSLs are often limited in complexity. However, toolkits miss out on compiler-based optimizations since they cannot fully optimize the user's code, and similarly miss out on certain optimizations that could be possible in hand-built parsers.
+    \end{enumerate}
 
+    In the next section, we argue that parser-building toolkits offer a practical middle ground between generated and hand-built parsers,
+    achieving good performance
+    while providing flexibility for modular, language-specific systems like Traqula.
 
-Given the increasing heterogeneity of SPARQL versions and dialects,
-Traqula must support a highly flexible and composable architecture.
-As outlined in the introduction and \autoref{federation}, differences in supported features, functions,
-and syntactic constructs already complicate query evaluation and tooling,
-and these discrepancies are expected to grow as SPARQL enters a phase of more rapid evolution through the SPARQL working group's maintenance mode \cite{modular-parsing}.
-Addressing this landscape requires a toolkit in which parsers, generators, and transformers can be assembled from small, reusable modules rather than fixed monolithic grammars.
+    \subsection{Existing Query Parsers}
 
+    \autoref{parsers} provides an overview of the parsing frameworks used by popular open-source query language parsing software and query engines.
+    The table extends upon our previous work~\cite{modular-parsing}, extending our analysis to open-source implementations of the
+    SQL~\cite{iso-sql}, GraphQL~\cite{spec:graphql}, GQL~\cite{iso-gql}, and Neo4J's cypher~\cite{neo4j} query languages.
+    We can clearly see that parser generators are the dominant approach, with 13 of the 16 systems listed using generated parsers.
+    Only one implementation uses a handwritten parser, and two employ a parser toolkit, namely Chevrotain.
 
-Flexibility is essential for two main reasons.
-First, researchers and practitioners need the ability to experiment with the language itself,
-by adding, modifying, or removing grammar rules, and evaluating the impact of those changes.
-Traqula's modular design aims to make such experimentation routine rather than burdensome,
-supporting rapid prototyping of new language features or alternative syntactic constructs.
-This capability has already been demonstrated in practice:
-Traqula's adoption within the modular Comunica query engine allowed us to contribute effectively to the standardization work for SPARQL 1.2.
-
-
-Second, SPARQL federation engines require a way to mediate between heterogeneous dialects of the SPARQL endpoints they federate over.
-A single query may need to be adapted to the capabilities of multiple endpoints, each exposing different SPARQL versions or dialects.
-Traqula's modularity is therefore not merely a convenience but a prerequisite for constructing reliable transformations between dialects,
-since each dialect will require a parser and generator.
-By decoupling parsing, generation, and algebraic transformation into flexible and composable components,
-Traqula positions itself as a key tool for SPARQL rewriting across versions and dialects.
-
-
-\subsection{Round-tripping}
-
-
-Because SPARQL is a structured language that is both written and inspected by humans,
-it benefits from the same ecosystem of tooling found around programming languages,
-which includes editors, code highlighters, linters, refactoring tools, and formatters.
-Many of these tools rely on \textit{round-tripping}, the ability to parse a query into an internal representation,
-apply a transformation, and regenerate a query string that is identical except for the intentional change.
-Achieving this property requires the parser and generator to preserve all user-visible details, such as comments, spacing,
-punctuation, or keyword capitalization, even when these details have no semantic impact on query evaluation.
-
-
-Round-tripping is essential for practical tooling.
-A linter that renames a variable, for instance,
-should not unexpectedly rewrite unrelated parts of the query or normalize stylistic elements that the user intended to keep.
-A simple example of SPARQL reformatting is rewriting the variable \textit{'s'} to \textit{'subject'} in
-\texttt{SelECT * \{ ?s   ?p ?o \}}, which should result in \texttt{SelECT * \{ ?subject   ?p ?o \}},
-without altering the spacing or keyword casing.
-\autoref{representations} illustrates the different representations involved:
-the query string;
-its abstract syntax tree (AST) as received from the parser, and used by linters and formatters;
-and its algebraic form, constructed from the AST~\cite{spec:sparqllang}, and used by query engines.
-Transformations may occur at any of these levels, but we only require the round-tripping property for AST-level transformations.
-
-
-Supporting round-tripping therefore shapes Traqula's design.
-The parser must retain sufficient information to reproduce the original query string, while the generator must reconstruct that structure without introducing unintended changes.
-This requirement ensures that Traqula can serve as a foundation for reliable SPARQL editing, formatting,
-and rewriting tools.
-
-
-\begin{figure}[tbp]
-\centering
-    \includegraphics[width=0.85\textwidth]{img/traqula-representations}
-    \caption{Various representations of an algebraically equivalent SPARQL 1.1 query and its SPARQL 1.2 counterpart.
-    The figure illustrates three layers: the concrete query string (blue), the Abstract Syntax Tree (AST, green), and the algebraic representation (orange).
-    Round-tripping requires that parsing a query string into an AST and regenerating it produces the identical string.
-    Transforming the leftmost query at the AST level preserves all syntactic information, so regenerating the transformed AST changes only those parts intentionally modified.
-    By contrast, converting the AST to algebra discards syntactic detail:
-    algebraically equivalent queries map to the same algebra and thus to the same canonicalized query string.
-    Finally, the figure shows how transformations between SPARQL 1.1 and SPARQL 1.2 can be performed at the algebra level,
-        where engines operate and where syntactic information is no longer preserved.}
-    \label{representations}
-\end{figure}
-
-
-\subsection{Web-based}
-
-
-Web-based technologies offer a natural foundation for widely adoptable SPARQL tooling.
-A Web-first JavaScript (or TypeScript after transpilation) implementation can run natively in the browser,
-where many SPARQL editors~\cite{yasgui,sparql-editor}, and even query engines~\cite{comunica} operate,
-while also executing on backend environments such as Node.js, Bun, or Deno,
-and inside application frameworks like Electron or Tauri.
-Moreover, the Web ecosystem lowers the barrier to implementing a SPARQL language server,
-similar to Qlue-ls~\cite{qlue-ls}, via the Language Server Protocol (LSP) using Microsoft's \textit{vscode-languageserver-node}.
-Such an LSP or more broadly any Traqula derived (system) service could directly leverage the modular architecture,
-enabling rule-level extensibility and round-tripping capabilities within interactive editors,
-especially since Traqula's APIs comunicate using JSON Data Transfor Objects (DTOs), which simplifying crossing language boundries.
-In principle, WebAssembly (WASM)
-provides the same portability, enabling code written in languages such as
-Rust (wasm-pack),
-C++ (Emscripten),
-or even JavaScript (Javy) to run across the Web platform.
-
-
-However, for Traqula we prioritise not only portability, but also accessibility, quick prototyping, and ease of contribution.
-TypeScript provides the same core advantages as WASM, execution across browser and server environments,
-while remaining far more familiar to the broad developer community,
-and without requiring ahead-of-time compilation.
-As the most widely used language on GitHub in 2025~\cite{github:lang-use},
-TypeScript maximises the likelihood that researchers and practitioners can both use and extend Traqula without specialised compilation toolchains or language-specific runtimes.
-
-
-By choosing a Web-based, TypeScript implementation, Traqula satisfies the requirement of broad,
-frictionless adoption while integrating naturally into both front-end applications and backend query engines.
-
-
-\subsection{Language-agnostic}
-
-
-To address query language heterogeneity, Traqula provides a generic core that can be reused to implement modular parsers,
-generators, and transformers for a variety of query languages.
-The SPARQL 1.1 and 1.2 parser, generator, and algebra transformations all build on this single core library,
-which enables the creation of modular systems beyond SPARQL.
-For example, the SHACL Compact Syntax developed by W3C's Data Shapes Working Group~\cite{shacl-1-2-cs}
-shares syntactic constructs with SPARQL, allowing it to reuse some components of Traqula's SPARQL grammar.
-Similarly, mapping languages such as RML~\cite{rml} for Knowledge Graph constructions allow for representation in SPARQL algebra~\cite{minoo_swj_algebraicmappingoperators}.
-Another example is the LDQL query language~\cite{ldql},
-which enables directed web navigation for Link Traversal Query Processing~\cite{linktraversalfoundations,solidquery} over Linked Data documents.
-In contrast, the newly standardized ISO Graph Query Language (GQL)~\cite{iso-gql} defines a completely different syntax,
-but could still leverage Traqula's language-agnostic core to implement modular parsers,
-generators, and transformations.
-
-
-In summary, Traqula's design is guided by four core requirements:
-flexibility, round-tripping, Web-based execution, and language-agnosticism.
-Together, these requirements ensure that Traqula can support modular,
-maintainable tooling for heterogeneous SPARQL dialects while remaining extensible to other query languages and deployment environments.
-With these principles in place, we now turn to existing approaches in parser design and query language tooling to position Traqula within the broader landscape.
-
-
-\section{Related Work}
-\label{sota}
-
-
-This section first covers the related work on parsers and compilers from a theoretical perspective;
-afterward, we list the most relevant existing parsers for SPARQL and other query languages.
-After covering the parsing itself, we take a look at common abstract syntax tree (AST) structures,
-specifically focussing on approaches that support round-tripping.
-
-
-\subsection{Parsers}
-
-
-Parsing a structured language involves transforming it from a string into a desired data structure.
-Conceptually, parsing can be divided into three steps \cite{alfred2007compilers}:
-
-\begin{enumerate}
-    \item \textbf{Lexical analysis} (or \textit{scanning}) performed by a \textit{lexer}: the source character stream is read and broken into non-overlapping sequences called lexemes. Each lexeme is classified by a token type, often defined using regular expressions. Lexemes may be represented as strings, ranges in the source, or both. The lexer outputs a stream or list of tokens, which are the lexeme representation together with its token type.
-    \item \textbf{Syntax analysis} (or \textit{parsing}) performed by a \textit{parser}: after having generated a 'flat' stream or list of tokens, the next part is to create a data structure, typically a tree, often called the Abstract Syntax Tree (AST), representing the syntactic structure of the language. Some parsers can automatically parse into a Concrete Syntax Tree (CST) which traces all grammar information without generalization or abstraction.
-    \item \textbf{Semantic analysis}: the AST is checked for non-structural constraints. In SPARQL, for example, the variable assigned in a \texttt{BIND} clause cannot be used in the immediately preceding tripleBlock within the same group. In programming languages, type checking is a common example of semantic analysis.
-\end{enumerate}
-
-
-One example of joined execution is the case of a streaming parser where the output data structure of the parser is itself a stream.
-Streaming parsers are specifically interesting when parsing large amounts of data,
-where semantic analysis is either not required or required in limited form.
-Example data formats that tailor themselves to streaming, specifically RDF data, are
-Jelly~\cite{streaming-parsing-jelly} and n-triples~\cite{spec:n-triples}.
-Another way of joined execution is where syntax analysis and semantic analysis are joined,
-allowing the parser to fail fast in case a semantic constraint would be broken, an approach partially taken by Traqula.
-
-
-The \textbf{parser construction technique}, i.e., the actual programmatic definition of the different parsing steps,
-can happen in various ways; we identify the following three:
-
-\begin{enumerate}
-    \item \textbf{Generated}: Code generation tools come with their Domain Specific Language (DSL) that will typically share similarities with Extended Backus--Naur Form (EBNF) and some Regular Expression dialect. The build process of the software that uses the custom parser should then compile the parser definition file (in the custom DSL) to the desired target language, which is typically the same language as the software being built. Example parser generators are Bison~\cite{bison-gnu} and ANTLR~\cite{parr1995antlr}.
-    \item \textbf{Hand-built}: Code generation can come with optimization limitations, when the grammar allows for optimizations not taken by the code generator. Writing a handwritten parser is powerful but very challenging to get right, because compilers often know powerful, very specific, non-trivial optimizations. On top of programming language-specific optimizations, other powerful optimizations exist for specific sets of grammars, such as LL(1) and LL(k)~\cite{alfred2007compilers,parr1995antlr}.
-    \item \textbf{Toolkits / libraries}: A compromise between hand-built parsers and generators exists in the form of toolkits / libraries. Parser building toolkits, e.g. Chevrotain~\cite{chevrotain}, are software libraries that provide an API that facilitates the construction of parsers within a specific programming language. The benefit of constructing a parser within the programming language the parser would be called from is that the project's code can be more coherent, allowing better integration, while also providing abstraction for powerful optimizations that can be made for specific grammars such as LL(1) and LL(k). Additionally, it allows the usage of language-specific features, e.g. a type system, which are often not present in DSLs used by parser generators, since DSLs are often limited in complexity. However, toolkits miss out on compiler-based optimizations since they cannot fully optimize the user's code, and similarly miss out on certain optimizations that could be possible in hand-built parsers.
-\end{enumerate}
-
-
-In the next section, we argue that parser-building toolkits offer a practical middle ground between generated and hand-built parsers,
-achieving good performance
-while providing flexibility for modular, language-specific systems like Traqula.
-
-
-\subsection{Existing Query Parsers}
-
-
-\autoref{parsers} provides an overview of the parsing frameworks used by popular open-source query language parsing software and query engines.
-The table extends upon our previous work~\cite{modular-parsing}, extending our analysis to open-source implementations of the
-SQL~\cite{iso-sql}, GraphQL~\cite{spec:graphql}, GQL~\cite{iso-gql}, and Neo4J's cypher~\cite{neo4j} query languages.
-We can clearly see that parser generators are the dominant approach, with 13 of the 16 systems listed using generated parsers.
-Only one implementation uses a handwritten parser, and two employ a parser toolkit, namely Chevrotain.
-
-
-\begin{table}[tbp]
-\label{parsers}
-\centering
-\newcolumntype{L}{>{\raggedright\arraybackslash}X<{\hspace{4pt}}}
-\begin{tabularx}{\textwidth}{|L|l|l|l|l|}
+    \begin{table}[tbp]
+        \label{parsers}
+        \centering
+        \newcolumntype{L}{>{\raggedright\arraybackslash}X<{\hspace{4pt}}}
+        \begin{tabularx}{\textwidth}{|L|l|l|l|l|}
 \hline
 \makecell[lb]{\textbf{Parsing Software}} & \makecell[lb]{\textbf{Query}\\ \textbf{Language}} & \makecell[lb]{\textbf{Parsing}\\ \textbf{Framework}} &
-    \makecell[lb]{\textbf{Construction}\\ \textbf{Technique}} & \makecell[lb]{\textbf{Req:}\\ \texttt{F R W L}} \\
+\makecell[lb]{\textbf{Construction}\\ \textbf{Technique}} & \makecell[lb]{\textbf{Req:}\\ \texttt{F R W L}} \\
 \hline
 Apache Jena - arq(v5.6.0)~\cite{apache-jena} & SPARQL & JavaCC & Generated & $\times$ $\times$ $\times$ $\times$ \\
 \hline
@@ -408,105 +381,95 @@ opengql grammar (v1.9.0)~\cite{opengql} & GQL & ANTLR & Generated & $\sim$ $\tim
 \hline
 Neo4J (v25)~\cite{neo4j} & Cypher & ANTLR & Generated & $\sim$ $\times$ $\sim$ $\times$ \\
 \hline
-    \end{tabularx}
-    \caption{List of parsing software packages for various query languages,
-        including the underlying parsing framework and construction technique.
-        The table also indicates how each package satisfies the requirements established in \autoref{requirements}:
-        \textit{flexibility (F)},
-        \textit{round-tripping (R)},
-        \textit{web-based (W)}, and
-        \textit{language agnosticism (L)}.
-        Each requirement is marked as fully met ($\checkmark$), partially met ($\sim$), or not met ($\times$);
-        question marks indicate uncertainty.}
-\end{table}
+        \end{tabularx}
+        \caption{List of parsing software packages for various query languages,
+            including the underlying parsing framework and construction technique.
+            The table also indicates how each package satisfies the requirements established in \autoref{requirements}:
+            \textit{flexibility (F)},
+            \textit{round-tripping (R)},
+            \textit{web-based (W)}, and
+            \textit{language agnosticism (L)}.
+            Each requirement is marked as fully met ($\checkmark$), partially met ($\sim$), or not met ($\times$);
+            question marks indicate uncertainty.}
+    \end{table}
+
+    Some parser generators support limited flexibility through grammar composition.
+    ANTLR~\cite{parr1995antlr}, for example, supports grammar imports,
+    enabling composition at the parser-level, but not at the rule-level.
+    Parsers can be extended in a manner similar to object-oriented class inheritance,
+    but individual rules cannot be deleted or patched while preserving references to the original implementation.
+    Furthermore, mainstream parser generators, like ANTLR require a compilation step and typically produce only a
+    Concrete Syntax Tree (CST), which reflects the full grammar without abstracting to a higher-level AST.
+    Producing an AST therefore requires an additional traversal and transformation pass,
+    effectively splitting parsing into two stages and increasing complexity for tools that operate on the AST.
+    While ANTLR theoretically supports targeting multiple host languages, including JavaScript and thus the Web,
+    this generally produces only a CST without an AST.
+    Crucially, none of these frameworks provides the combination of fine-grained extensibility,
+    AST-level round-tripping, Web based execution, and query language agnostic design demanded by Traqula,
+    motivating the need for a new modular approach.
+
+    To address these requirements, we selected Chevrotain~\cite{chevrotain} as the foundation for Traqula.
+    Chevrotain can uniquely satisfy our requirements for flexibility, round-tripping, Web-based execution, and language-agnostic extensibility,
+    while maintaining a sufficiently high-level abstraction.
+    As a parsing toolkit, Chevrotain supports rule-level modularity:
+    parser construction is expressed directly in TypeScript rather than a separate grammar language, enabling dynamic manipulation of individual rules, runtime extensions,
+    and distribution of language-agnostic helpers as ordinary TypeScript modules.
+    Unlike most parser generators, Chevrotain can parse directly into AST rather than CSTs,
+    allowing round-trippable ASTs without an intermediate transformation.
+    Finally, Chevrotain is highly optimised for Web-based execution environments,
+    producing fast parsers that run efficiently in both browsers and server-side JavaScript.
+    Together, these properties make Chevrotain a particularly strong match for Traqula's design goals.
+
+    \subsection{AST Structures for Round-Tripping}
+
+    To support Traqula's requirement for AST-level round-tripping,
+    we examine two popular tools designed for reformatting and rewriting: Babel~\cite{babel} and ESLint~\cite{eslint}.
+
+    Babel~\cite{babel} is a compiler that enables developers to write next-generation JavaScript and transpile it to earlier versions,
+    ensuring compatibility with older environments.
+    To support transformations while preserving the original source structure,
+    Babel annotates its AST nodes with source location information,
+    specifying the range of offsets each node represents in the original string.
+    When a node is replaced, it can either be substituted with a raw source string,
+    preserving user-visible syntax exactly, or with a new AST node, whose string representation is automatically generated.
+    Auto-generation produces a valid string for the node; for example, a SPARQL string literal '\texttt{a}' could be generated as \texttt{'a'}, \texttt{"a"}, \texttt{'''a'''}, \texttt{"""a"""}, \texttt{'a'\^{}\^{}xsd:string}', etc.
+    Similarly, SPARQL keywords are case-insensitive, so an auto-generated keyword may have any casing.
+
+    ESLint~\cite{eslint} is a widely used linter that also supports automatic fixes.
+    Like Babel, ESLint requires AST nodes to carry source location information.
+    Unlike Babel, fixes are applied externally through a helper that patches specific source ranges with new strings, rather than modifying the AST nodes directly.
+    Despite this difference, the key principle of associating each node with its position in the source text remains central to enabling precise, reliable transformations.
 
 
-Some parser generators support limited flexibility through grammar composition.
-ANTLR~\cite{parr1995antlr}, for example, supports grammar imports,
-enabling composition at the parser-level, but not at the rule-level.
-Parsers can be extended in a manner similar to object-oriented class inheritance,
-but individual rules cannot be deleted or patched while preserving references to the original implementation.
-Furthermore, mainstream parser generators, like ANTLR require a compilation step and typically produce only a
-Concrete Syntax Tree (CST), which reflects the full grammar without abstracting to a higher-level AST.
-Producing an AST therefore requires an additional traversal and transformation pass,
-effectively splitting parsing into two stages and increasing complexity for tools that operate on the AST.
-While ANTLR theoretically supports targeting multiple host languages, including JavaScript and thus the Web,
-this generally produces only a CST without an AST.
-Crucially, none of these frameworks provides the combination of fine-grained extensibility,
-AST-level round-tripping, Web based execution, and query language agnostic design demanded by Traqula,
-motivating the need for a new modular approach.
+    \section{Architecture}
+    \label{architecture}
 
+    In this section, we go into more detail on the architecture implemented in Traqula, and how we extended the
+    architectural vision towards query generation and transformation.
+    We explain how Traqula exists of many small, interlinkable packages
+    and provide more detail on the core package, which contains the language-agnostic builders and transformers.
 
-To address these requirements, we selected Chevrotain~\cite{chevrotain} as the foundation for Traqula.
-Chevrotain can uniquely satisfy our requirements for flexibility, round-tripping, Web-based execution, and language-agnostic extensibility,
-while maintaining a sufficiently high-level abstraction.
-As a parsing toolkit, Chevrotain supports rule-level modularity:
-parser construction is expressed directly in TypeScript rather than a separate grammar language, enabling dynamic manipulation of individual rules, runtime extensions,
-and distribution of language-agnostic helpers as ordinary TypeScript modules.
-Unlike most parser generators, Chevrotain can parse directly into AST rather than CSTs,
-allowing round-trippable ASTs without an intermediate transformation.
-Finally, Chevrotain is highly optimised for Web-based execution environments,
-producing fast parsers that run efficiently in both browsers and server-side JavaScript.
-Together, these properties make Chevrotain a particularly strong match for Traqula's design goals.
+    \subsection{Builder-based Dependency Injection}
 
+    At the core of Traqula's flexibility is its builder-based dependency injection architecture.
+    Dependency injection~\cite{fowler-dep-inj} is a software design that promotes flexible software by
+    creating objects or functions that receive the components they rely on, rather than instantiating them directly,
+    allowing them to treat their dependencies more conceptually.
+    In Traqula each functional element, such as a parser rule, generator rule, or transformation step,
+    is declared under a symbolic name, and refers to other rules by name rather than by concrete implementation.
+    This indirection enables users to replace or patch functionality simply by adjusting the mapping from names to functions.
+    \autoref{rulemap} (left) illustrates this idea,
+    while \autoref{rulemap} (right) shows Traqula's TypeScript definition of the \texttt{iri} parser and generator rules, each depending on named subrules.
 
-\subsection{AST Structures for Round-Tripping}
-
-
-To support Traqula's requirement for AST-level round-tripping,
-we examine two popular tools designed for reformatting and rewriting: Babel~\cite{babel} and ESLint~\cite{eslint}.
-
-
-Babel~\cite{babel} is a compiler that enables developers to write next-generation JavaScript and transpile it to earlier versions,
-ensuring compatibility with older environments.
-To support transformations while preserving the original source structure,
-Babel annotates its AST nodes with source location information,
-specifying the range of offsets each node represents in the original string.
-When a node is replaced, it can either be substituted with a raw source string,
-preserving user-visible syntax exactly, or with a new AST node, whose string representation is automatically generated.
-Auto-generation produces a valid string for the node; for example, a SPARQL string literal '\texttt{a}' could be generated as \texttt{'a'}, \texttt{"a"}, \texttt{'''a'''}, \texttt{"""a"""}, \texttt{'a'\^{}\^{}xsd:string}', etc.
-Similarly, SPARQL keywords are case-insensitive, so an auto-generated keyword may have any casing.
-
-
-ESLint~\cite{eslint} is a widely used linter that also supports automatic fixes.
-Like Babel, ESLint requires AST nodes to carry source location information.
-Unlike Babel, fixes are applied externally through a helper that patches specific source ranges with new strings, rather than modifying the AST nodes directly.
-Despite this difference, the key principle of associating each node with its position in the source text remains central to enabling precise, reliable transformations.
-
-
-\section{Architecture}
-\label{architecture}
-
-
-In this section, we go into more detail on the architecture implemented in Traqula, and how we extended the
-architectural vision towards query generation and transformation.
-We explain how Traqula exists of many small, interlinkable packages
-and provide more detail on the core package, which contains the language-agnostic builders and transformers.
-
-
-\subsection{Builder-based Dependency Injection}
-
-
-At the core of Traqula's flexibility is its builder-based dependency injection architecture.
-Dependency injection~\cite{fowler-dep-inj} is a software design that promotes flexible software by
-creating objects or functions that receive the components they rely on, rather than instantiating them directly,
-allowing them to treat their dependencies more conceptually.
-In Traqula each functional element, such as a parser rule, generator rule, or transformation step,
-is declared under a symbolic name, and refers to other rules by name rather than by concrete implementation.
-This indirection enables users to replace or patch functionality simply by adjusting the mapping from names to functions.
-\autoref{rulemap} (left) illustrates this idea,
-while \autoref{rulemap} (right) shows Traqula's TypeScript definition of the \texttt{iri} parser and generator rules, each depending on named subrules.
-
-
-\begin{figure}[tbp]
-\centering
-    \begin{minipage}[c]{0.35\textwidth}
+    \begin{figure}[tbp]
         \centering
-        \includegraphics[width=\textwidth]{img/traqula-rulemap-single}
-    \end{minipage}%
-    \hfill
-    \begin{minipage}[c]{0.60\textwidth}
-        \begin{lstlisting}[language=JavaScript,basicstyle=\fontsize{6}{7.6}\ttfamily,breaklines=true]
+        \begin{minipage}[c]{0.35\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{img/traqula-rulemap-single}
+        \end{minipage}%
+        \hfill
+        \begin{minipage}[c]{0.60\textwidth}
+            \begin{lstlisting}[language=JavaScript,basicstyle=\fontsize{6}{7.6}\ttfamily,breaklines=true]
 export const iri: SparqlRule<'iri', TermIri> = {
   name: 'iri',
   impl: ({ SUBRULE, OR }) => () => OR<TermIri>([
@@ -519,38 +482,35 @@ export const iri: SparqlRule<'iri', TermIri> = {
         SUBRULE(prefixedName, ast) :
         SUBRULE(iriFull, ast),
 };
-        \end{lstlisting}
-    \end{minipage}
-    \caption{\textbf{Left:} A mapping from rule names to their implementations, as registered by the user.
-    In this example, the \texttt{iri} rule depends on the named rules \textit{\texttt{iriFull}} and \textit{\texttt{prefixedIri}}.
-    At execution time, the implementation of \texttt{iri} consults the user-provided map to resolve these names to their concrete implementations. \textbf{Right:} Traqula's TypeScript declaration of the same \texttt{iri} rule.
-    The rule is defined under the name \textit{iri}, and provides both a parser implementation (\texttt{impl}) and a generator implementation (\texttt{gImpl}).
-    The use of \textit{'SUBRULE'} reflects the same \textit{name-based lookup} shown in the left figure,
-        delegating execution to the implementations registered under the names \texttt{iriFull} and \texttt{prefixedIri}.}
-    \label{rulemap}
-\end{figure}
+            \end{lstlisting}
+        \end{minipage}
+        \caption{\textbf{Left:} A mapping from rule names to their implementations, as registered by the user.
+        In this example, the \texttt{iri} rule depends on the named rules \textit{\texttt{iriFull}} and \textit{\texttt{prefixedIri}}.
+        At execution time, the implementation of \texttt{iri} consults the user-provided map to resolve these names to their concrete implementations. \textbf{Right:} Traqula's TypeScript declaration of the same \texttt{iri} rule.
+        The rule is defined under the name \textit{iri}, and provides both a parser implementation (\texttt{impl}) and a generator implementation (\texttt{gImpl}).
+        The use of \textit{'SUBRULE'} reflects the same \textit{name-based lookup} shown in the left figure,
+            delegating execution to the implementations registered under the names \texttt{iriFull} and \texttt{prefixedIri}.}
+        \label{rulemap}
+    \end{figure}
 
+    To manage and share these rule dictionaries, Traqula adopts the
+    builder design pattern.
+    Builders construct complex, modular objects step by step, and expose a uniform API for composing, extending, and patching rules.
+    By implementing the builder pattern directly in the host language,
+    Traqula avoids the need for additional compilation stages and allows builders to be referenced, extended, and combined programmatically.
+    This choice also makes it possible to integrate language-specific features,
+    most notably static type checking, into the dependency-injection mechanism itself.
+    Traqula provides three task-specific builders: a parser builder, a generator builder, and a general indirection builder.
+    All share the same underlying rule dictionary,
+    differing only in the \texttt{build} artifact they produce, and the supplementary dependencies they inject.
 
-To manage and share these rule dictionaries, Traqula adopts the
-builder design pattern.
-Builders construct complex, modular objects step by step, and expose a uniform API for composing, extending, and patching rules.
-By implementing the builder pattern directly in the host language,
-Traqula avoids the need for additional compilation stages and allows builders to be referenced, extended, and combined programmatically.
-This choice also makes it possible to integrate language-specific features,
-most notably static type checking, into the dependency-injection mechanism itself.
-Traqula provides three task-specific builders: a parser builder, a generator builder, and a general indirection builder.
-All share the same underlying rule dictionary,
-differing only in the \texttt{build} artifact they produce, and the supplementary dependencies they inject.
+    Each builder exposes the same operations to manage the rule dictionary.
+    \autoref{builder} illustrates the core management functions,
+    creating a builder, adding a rule, patching a rules, and building the final artifact .
 
-
-Each builder exposes the same operations to manage the rule dictionary.
-\autoref{builder} illustrates the core management functions,
-creating a builder, adding a rule, patching a rules, and building the final artifact .
-
-
-\begin{figure}[tbp]
-\centering
-    \begin{lstlisting}[language=JavaScript,basicstyle=\fontsize{6}{7.6}\ttfamily,breaklines=true]
+    \begin{figure}[tbp]
+        \centering
+        \begin{lstlisting}[language=JavaScript,basicstyle=\fontsize{6}{7.6}\ttfamily,breaklines=true]
 const iriGeneratorBuilder = GeneratorBuilder
   .create([iriFull, prefixedIri])
   .addRule(iri);
@@ -558,68 +518,60 @@ const specialIriGenerator = GeneratorBuilder
   .create(iriGeneratorBuilder)
   .patchRule(alternativePrefixedRule)
   .build();
-    \end{lstlisting}
-    \caption{Construction of a 'special IRI generator' based on an existing builder for building a IRI generator,
-        patching it with an alternative rule implementation for the \textit{'prefixedIri'} rule.}
-    \label{builder}
-\end{figure}
+        \end{lstlisting}
+        \caption{Construction of a 'special IRI generator' based on an existing builder for building a IRI generator,
+            patching it with an alternative rule implementation for the \textit{'prefixedIri'} rule.}
+        \label{builder}
+    \end{figure}
 
+    \subsection{Modular Packages}
 
-\subsection{Modular Packages}
+    To maximize independent evolution and minimise unnecessary dependencies,
+    Traqula is composed of many small, interlinked packages rather than a single big monolithic package.
+    A user only need to depend on what packages they actually use.
+    For example, if a user only requires SPARQL 1.1 parsing, they can depend solely on \textit{'@traqula/parser-sparql-1-1'},
+    without needing to pull in, and consider the SPARQL 1.2 parser, the generators, or the transformers Traqula maintains.
+    Beyond flexibility and extensibility, this modular architecture is crucial for controlling bundle size, a key requirement for modern Web applications.
+    By allowing developers to import only the necessary components, Traqula avoids the overhead of shipping unused functionality to the browser,
+    improving load times and performance.
 
+    Modularity also reinforces well-defined and stable package interfaces: because Traqula itself is built from these packages,
+    its APIs must remain open for extension.
+    For maintainability and version control, all packages are managed as a monorepo in a single GitHub repository under the Comunica organisation:
+    https://github.com/comunica/traqula.
 
-To maximize independent evolution and minimise unnecessary dependencies,
-Traqula is composed of many small, interlinked packages rather than a single big monolithic package.
-A user only need to depend on what packages they actually use.
-For example, if a user only requires SPARQL 1.1 parsing, they can depend solely on \textit{'@traqula/parser-sparql-1-1'},
-without needing to pull in, and consider the SPARQL 1.2 parser, the generators, or the transformers Traqula maintains.
-Beyond flexibility and extensibility, this modular architecture is crucial for controlling bundle size, a key requirement for modern Web applications.
-By allowing developers to import only the necessary components, Traqula avoids the overhead of shipping unused functionality to the browser,
-improving load times and performance.
+    \subsection{Language-Agnostic Core Package}
 
+    Following the modular package design, Traqula provides a central language-agnostic core package containing the generic builders and transformers.
+    These components are designed to be reusable across different query languages,
+    whether for dialects of SPARQL or entirely different languages such as SHACL-compact or GQL.
+    The core package underpins Traqula's flexibility, enabling parsers, generators, and transformations to be composed in a language-independent manner.
 
-Modularity also reinforces well-defined and stable package interfaces: because Traqula itself is built from these packages,
-its APIs must remain open for extension.
-For maintainability and version control, all packages are managed as a monorepo in a single GitHub repository under the Comunica organisation:
-https://github.com/comunica/traqula.
+    A key feature of the core package is the generic transformers and visitors,
+    which facilitate AST- and algebra-level transformations/ visiting.
+    This transformer is type-safe, ensuring correctness, leveraging TypeScript's generics to adapt dynamically to the AST or algebra representation being manipulated.
+    Beyond enabling rewrites and translations between query languages,
+    the transformers also support AST-level reformatting, since reformatting can be expressed as a transformation on the AST level in the case of Traqula.
 
-
-\subsection{Language-Agnostic Core Package}
-
-
-Following the modular package design, Traqula provides a central language-agnostic core package containing the generic builders and transformers.
-These components are designed to be reusable across different query languages,
-whether for dialects of SPARQL or entirely different languages such as SHACL-compact or GQL.
-The core package underpins Traqula's flexibility, enabling parsers, generators, and transformations to be composed in a language-independent manner.
-
-
-A key feature of the core package is the generic transformers and visitors,
-which facilitate AST- and algebra-level transformations/ visiting.
-This transformer is type-safe, ensuring correctness, leveraging TypeScript's generics to adapt dynamically to the AST or algebra representation being manipulated.
-Beyond enabling rewrites and translations between query languages,
-the transformers also support AST-level reformatting, since reformatting can be expressed as a transformation on the AST level in the case of Traqula.
-
-
-To use the transformer, one instantiates a new transformer object, specifying the types of AST nodes or algebra operations,
-and optionally providing a default transformation context.
-Transformations can be guided through preVisitors, allowing to
-\begin{enumerate*}[label=\arabic*.]
+    To use the transformer, one instantiates a new transformer object, specifying the types of AST nodes or algebra operations,
+    and optionally providing a default transformation context.
+    Transformations can be guided through preVisitors, allowing to
+    \begin{enumerate*}[label=\arabic*.]
     \item stop traversal completely;
     \item continue traversal into descendants;
     \item skip specified properties of the current node;
     \item copy certain keys without traversal; and
     \item shallowly copy the current node.
-\end{enumerate*}
-The transformer maintains a stack of nodes to be transformed, ensuring that descendant nodes are processed before their parents.
-\autoref{transformer} illustrates a simple algebraic transformation that wraps a \textit{'distinct'} operation around the first \textit{'project'} node it encounters.
-In addition, we provide
-a catalogue of known existing transformations powered by Traqula,
-thereby also demonstrating how Traqula can be used for traditional query optimizing or rewriting.
+    \end{enumerate*}
+    The transformer maintains a stack of nodes to be transformed, ensuring that descendant nodes are processed before their parents.
+    \autoref{transformer} illustrates a simple algebraic transformation that wraps a \textit{'distinct'} operation around the first \textit{'project'} node it encounters.
+    In addition, we provide
+    a catalogue of known existing transformations powered by Traqula,
+    thereby also demonstrating how Traqula can be used for traditional query optimizing or rewriting.
 
-
-\begin{figure}[tbp]
-\centering
-    \begin{lstlisting}[language=JavaScript,basicstyle=\fontsize{6}{7.6}\ttfamily,breaklines=true]
+    \begin{figure}[tbp]
+        \centering
+        \begin{lstlisting}[language=JavaScript,basicstyle=\fontsize{6}{7.6}\ttfamily,breaklines=true]
 const transformed = new TransformerTyped<Sparql11Nodes>()
   .transformNode({ // A query as AST
     type: Algebra.Types.SLICE,
@@ -636,173 +588,152 @@ const transformed = new TransformerTyped<Sparql11Nodes>()
       transform: projection => algebraFactory.createDistinct(projection),
     },
   });
-    \end{lstlisting}
-    \caption{Example usage of the transformer to wrap a \textit{'distinct'} node around the first \textit{'project'} node in an algebraic expression.
-    Providing input query \texttt{SELECT * \{ \{ Select * \{ ?s ex:a ?o \} \} . ?s ex:b ?o . \} LIMIT 20}
-    would result in rewritten query \texttt{SELECT DISTINCT * \{ \{ Select * \{ ?s ex:a ?o \} \} . ?s ex:b ?o . \} LIMIT 20}.}
-    \label{transformer}
-\end{figure}
+        \end{lstlisting}
+        \caption{Example usage of the transformer to wrap a \textit{'distinct'} node around the first \textit{'project'} node in an algebraic expression.
+        Providing input query \texttt{SELECT * \{ \{ Select * \{ ?s ex:a ?o \} \} . ?s ex:b ?o . \} LIMIT 20}
+        would result in rewritten query \texttt{SELECT DISTINCT * \{ \{ Select * \{ ?s ex:a ?o \} \} . ?s ex:b ?o . \} LIMIT 20}.}
+        \label{transformer}
+    \end{figure}
 
 
-\section{Implementation}
-\label{implementation}
+    \section{Implementation}
+    \label{implementation}
 
+    This section outlines the technological foundations of Traqula, the SPARQL languages and dialects currently supported,
+    and the maintenance plan that ensures the system remains reliable and extensible as query languages continue to evolve.
 
-This section outlines the technological foundations of Traqula, the SPARQL languages and dialects currently supported,
-and the maintenance plan that ensures the system remains reliable and extensible as query languages continue to evolve.
+    \subsection{TypeScript}
 
+    Traqula is implemented in TypeScript, following the rationale outlined in \autoref{requirements}:
+    TypeScript offers broad accessibility, quick prototyping, browser-server portability, and a familiar development environment for a large set of developers.
+    Within Traqula, TypeScript empowers the dynamic, and generic APIs used by the builders and transformers, through its expressive type system,
+    allowing IDEs to surface context-specific function signatures, prevent common integration mistakes, and support safe extensibility.
 
-\subsection{TypeScript}
-
-
-Traqula is implemented in TypeScript, following the rationale outlined in \autoref{requirements}:
-TypeScript offers broad accessibility, quick prototyping, browser-server portability, and a familiar development environment for a large set of developers.
-Within Traqula, TypeScript empowers the dynamic, and generic APIs used by the builders and transformers, through its expressive type system,
-allowing IDEs to surface context-specific function signatures, prevent common integration mistakes, and support safe extensibility.
-
-
-Traqula is developed openly on GitHub under the MIT licence, making the project straightforward to adopt, audit, modify, and extend.
-Documentation is provided through:
-\begin{enumerate*}[label=\arabic*.]
+    Traqula is developed openly on GitHub under the MIT licence, making the project straightforward to adopt, audit, modify, and extend.
+    Documentation is provided through:
+    \begin{enumerate*}[label=\arabic*.]
     \item documentation pages maintained by the development team as part of exposed package READMEs (e.g. @traqula/parser-sparql-1-1),
     \item dedicated documentation guides, and
     \item JSDoc annotations that are directly visible within IDEs while also being exposed through an
-\end{enumerate*}
-automatically generated documentation website.
-Together, these choices reduce the barrier for integrating Traqula into research prototypes, production systems, and community-driven extensions.
+    \end{enumerate*}
+    automatically generated documentation website.
+    Together, these choices reduce the barrier for integrating Traqula into research prototypes, production systems, and community-driven extensions.
+
+    \subsection{Current language support}
+
+    Traqula currently supports SPARQL 1.1~\cite{spec:sparqllang}, SPARQL 1.2~\cite{sparql-1-2}, and SPARQL 1.1 + ADJUST~\cite{sparql-adjust},
+    providing the ability to transform queries to an AST and to their algebraic representation.
+    Given an algebra, a corresponding AST can be created that produces the same algebra, and given an AST, a matching query string can be generated.
+    Both the AST and algebra for all supported query languages can be transformed using type-safe functions from the core library.
+    When an AST includes source location information, the generator produces a query string that preserves user-visible details,
+    ensuring that semantically irrelevant information, such as spacing or keyword capitalization, is maintained.
+
+    To ensure correctness, Traqula includes extensive integration tests.
+    The project currently incorporates 6269 tests, achieving 94\% line coverage,
+    combining tests authored specifically for Traqula with those inherited from SPARQL.js~\cite{sparqljs} and SPARQLAlgebra.js~\cite{sparqlalgebrajs},
+    two widely used projects that have been deprecated in favor of Traqula.
+    In addition, Traqula leverages the RDF Tests Community Group's test suites,
+    which provide a broad set of positive and negative tests for implementers of RDF technologies.
+    To further increase maturity, reliability, and facilitate future contributions,
+    the authors are committed to further expanding Traqula's test coverage to 100\% through additional unit and integration tests.
+
+    \subsection{Maintenance and sustainability plan}
+
+    A clear maintenance plan is essential for both the authors of a software project and for users who rely on it.
+    Traqula's source code is openly available as free software under the MIT license,
+    which allows anyone to contribute, fork, or maintain their own version.
+    This ensures that, even if the original maintainers step away, the project can continue to evolve.
+
+    However, unmaintained software remains a concern for dependent projects regardless of licensing.
+    To address this, Traqula is maintained under the Comunica association,
+    which distributes responsibility across multiple contributors rather than relying on a single individual.
+    Furthermore, the association provides a mechanism for financial incentives, such as bounties,
+    allowing organizations or users to fund the implementation of specific features or changes.
+    This structured support increases the trustworthiness and long-term sustainability of the project,
+    providing confidence to both researchers and practitioners who depend on Traqula.
 
 
-\subsection{Current language support}
+    \section{Performance analysis}
+    \label{perf}
+
+    While the primary focus of Traqula is flexibility and expressivity,
+    sufficient performance is still important in broadly used software tools.
+    As such, we evaluate the execution-time performance of Traqula, comparing its different parsing modes,
+    contrasting it with the SPARQL.js~\cite{sparqljs} parser plus the algebra transformation software SPARQLAlgebra.js~\cite{sparqlalgebrajs},
+    and highlighting the impact of parser reuse.
+    All measurements were conducted on Fedora Linux 43 (Workstation Edition), equipped with an Intel® Core™ Ultra 7 165U × 14 processor, having 16 GiB of RAM.
+    We measured the execution times of parsing 50 real-world SPARQL 1.1 queries from the DBpedia SPARQL Benchmark~\cite{dbpedia-bench} in each of the tools and
+
+    \autoref{traqula-bench} shows the execution times of Traqula across different targets and parser configurations.
+    Patching a modular SPARQL 1.1 parser to support SPARQL 1.2 results in a small but statistically significant increase in execution time (p < 0.05),
+    with a mean increase of 10.8\% .
+    Tracking source information to support round-tripping introduces additional overhead due to the more complex lexing process,
+    with mean increases of 18.8\%
+    and 16.6\%  for SPARQL 1.1 and 1.2 parsing, respectively (both p < 0.05).
+    Parsing directly into algebra, effectively performing an AST transformation after parsing, further increases execution time,
+    with mean increases of 45.6\%  for SPARQL 1.1 and 43.0\%  for SPARQL 1.2 (p < 0.05).
+    We also carried out these same experiments for the 199 manually curated SPARQL 1.1 queries within Traqula's unit tests and reach the same conclusions.
+    For space reasons, we omit these results from this paper.
+
+    Despite these relative execution time increases, \autoref{traqula-bench} shows Traqula remains substantially faster than existing solutions.
+    The mean execution time for parsing into an AST using Traqula is 2.5 ms, compared to 23.93 ms for SPARQL.js, a 957.2\% difference,
+    even though Traqula generates a more complete and correct AST.
+    Parsing into algebra shows a similar trend: Traqula takes 3.64 ms, while SPARQLAlgebra.js (using SPARQL.js) requires 24.04 ms, a 660.4\% difference.
+    Much of this advantage can be attributed to the performance of Chevrotain, the parser toolkit underlying Traqula.
+
+    \begin{figure}[tbp]
+        \centering
+        \includegraphics[width=0.7\textwidth]{img/boxplots}
+        \caption{Variance of execution times (ms) for Traqula's SPARQL 1.1 and 1.2 parsers,
+            when parsing 50 real world SPARQL 1.1 queries~\cite{dbpedia-bench} using different configurations.
+            Parsing SPARQL 1.2 is always slightly slower than parsing SPARQL 1.1 due to increased grammar complexity,
+            and source tracking or algebra transformation further increase effort.}
+        \label{traqula-bench}
+    \end{figure}
+
+    Finally, it is important to recognise the cost associated with using a parser toolkit in a non-pre-compiled language like TypeScript.
+    Traqula's underlying parser toolkit, Chevrotain, performs its parser optimizations at runtime, making parser construction computationally expensive.
+    To illustrate, parsing the 50 queries with a prebuilt and reused parser has a mean execution time of 2.5 ms,
+    whereas creating a new parser for each query results in a mean execution time of 689.31 ms; a slowdown of 275.7 times.
+    Moreover, because Chevrotain is optimised for JavaScript's V8 engine, many performance benefits rely on JIT compilation.
+    Recreating the parser repeatedly may prevent or invalidate JIT optimizations, further degrading performance.
+    This makes parser reuse essential in practice, as already adopted in systems such as the Comunica query engine.
+
+    \begin{figure}[tbp]
+        \centering
+        \includegraphics[width=0.7\textwidth]{img/barplot_means}
+        \caption{Execution time (ms) comparison between Traqula and the
+        SPARQL.js~\cite{sparqljs} parser plus the algebra transformation software SPARQLAlgebra.js~\cite{sparqlalgebrajs}
+        when parsing 50 real-world SPARQL 1.1 queries~\cite{dbpedia-bench}.
+        Parsing to both an AST (green) and to algebra (orange) is significantly faster using Traqula.}
+        \label{traqula-sparqljs}
+    \end{figure}
 
 
-Traqula currently supports SPARQL 1.1~\cite{spec:sparqllang}, SPARQL 1.2~\cite{sparql-1-2}, and SPARQL 1.1 + ADJUST~\cite{sparql-adjust},
-providing the ability to transform queries to an AST and to their algebraic representation.
-Given an algebra, a corresponding AST can be created that produces the same algebra, and given an AST, a matching query string can be generated.
-Both the AST and algebra for all supported query languages can be transformed using type-safe functions from the core library.
-When an AST includes source location information, the generator produces a query string that preserves user-visible details,
-ensuring that semantically irrelevant information, such as spacing or keyword capitalization, is maintained.
+    \section{Conclusion}
+    \label{conclusion}
 
+    In this paper, we introduced Traqula, a framework for modular query parsing, generation, and transformation.
+    We argue that a modular parser is essential for the future of SPARQL querying, particularly in increasingly heterogeneous federated environments.
+    By decoupling the various steps in query manipulation, Traqula enables rapid experimentation with new or modified language features.
+    Furthermore, it facilitates query rewriting between different languages and supports the creation of modular query tooling,
+    such as linters and reformatters, through easy AST and algebra manipulation.
 
-To ensure correctness, Traqula includes extensive integration tests.
-The project currently incorporates 6269 tests, achieving 94\% line coverage,
-combining tests authored specifically for Traqula with those inherited from SPARQL.js~\cite{sparqljs} and SPARQLAlgebra.js~\cite{sparqlalgebrajs},
-two widely used projects that have been deprecated in favor of Traqula.
-In addition, Traqula leverages the RDF Tests Community Group's test suites,
-which provide a broad set of positive and negative tests for implementers of RDF technologies.
-To further increase maturity, reliability, and facilitate future contributions,
-the authors are committed to further expanding Traqula's test coverage to 100\% through additional unit and integration tests.
+    Traqula is designed for widespread adoption.
+    It has already been integrated into the modular querying framework Comunica.
+    In addition, we
+    demonstrate its usability for extending language features as part of a Comunica tutorial.
+    The framework is openly available on GitHub under the MIT license and is maintained by the Comunica association,
+    ensuring long-term sustainability.
 
+    Looking forward, Traqula's modular architecture and developer-friendly APIs pave the way for supporting additional query languages,
+    such as SHACL Compact Syntax and GQL.
 
-\subsection{Maintenance and sustainability plan}
-
-
-A clear maintenance plan is essential for both the authors of a software project and for users who rely on it.
-Traqula's source code is openly available as free software under the MIT license,
-which allows anyone to contribute, fork, or maintain their own version.
-This ensures that, even if the original maintainers step away, the project can continue to evolve.
-
-
-However, unmaintained software remains a concern for dependent projects regardless of licensing.
-To address this, Traqula is maintained under the Comunica association,
-which distributes responsibility across multiple contributors rather than relying on a single individual.
-Furthermore, the association provides a mechanism for financial incentives, such as bounties,
-allowing organizations or users to fund the implementation of specific features or changes.
-This structured support increases the trustworthiness and long-term sustainability of the project,
-providing confidence to both researchers and practitioners who depend on Traqula.
-
-
-\section{Performance analysis}
-\label{perf}
-
-
-While the primary focus of Traqula is flexibility and expressivity,
-sufficient performance is still important in broadly used software tools.
-As such, we evaluate the execution-time performance of Traqula, comparing its different parsing modes,
-contrasting it with the SPARQL.js~\cite{sparqljs} parser plus the algebra transformation software SPARQLAlgebra.js~\cite{sparqlalgebrajs},
-and highlighting the impact of parser reuse.
-All measurements were conducted on Fedora Linux 43 (Workstation Edition), equipped with an Intel® Core™ Ultra 7 165U × 14 processor, having 16 GiB of RAM.
-We measured the execution times of parsing 50 real-world SPARQL 1.1 queries from the DBpedia SPARQL Benchmark~\cite{dbpedia-bench} in each of the tools and
-
-
-\autoref{traqula-bench} shows the execution times of Traqula across different targets and parser configurations.
-Patching a modular SPARQL 1.1 parser to support SPARQL 1.2 results in a small but statistically significant increase in execution time (p < 0.05),
-with a mean increase of 10.8\% .
-Tracking source information to support round-tripping introduces additional overhead due to the more complex lexing process,
-with mean increases of 18.8\%
-and 16.6\%  for SPARQL 1.1 and 1.2 parsing, respectively (both p < 0.05).
-Parsing directly into algebra, effectively performing an AST transformation after parsing, further increases execution time,
-with mean increases of 45.6\%  for SPARQL 1.1 and 43.0\%  for SPARQL 1.2 (p < 0.05).
-We also carried out these same experiments for the 199 manually curated SPARQL 1.1 queries within Traqula's unit tests and reach the same conclusions.
-For space reasons, we omit these results from this paper.
-
-
-Despite these relative execution time increases, \autoref{traqula-bench} shows Traqula remains substantially faster than existing solutions.
-The mean execution time for parsing into an AST using Traqula is 2.5 ms, compared to 23.93 ms for SPARQL.js, a 957.2\% difference,
-even though Traqula generates a more complete and correct AST.
-Parsing into algebra shows a similar trend: Traqula takes 3.64 ms, while SPARQLAlgebra.js (using SPARQL.js) requires 24.04 ms, a 660.4\% difference.
-Much of this advantage can be attributed to the performance of Chevrotain, the parser toolkit underlying Traqula.
-
-
-\begin{figure}[tbp]
-\centering
-    \includegraphics[width=0.7\textwidth]{img/boxplots}
-    \caption{Variance of execution times (ms) for Traqula's SPARQL 1.1 and 1.2 parsers,
-        when parsing 50 real world SPARQL 1.1 queries~\cite{dbpedia-bench} using different configurations.
-        Parsing SPARQL 1.2 is always slightly slower than parsing SPARQL 1.1 due to increased grammar complexity,
-        and source tracking or algebra transformation further increase effort.}
-    \label{traqula-bench}
-\end{figure}
-
-
-Finally, it is important to recognise the cost associated with using a parser toolkit in a non-pre-compiled language like TypeScript.
-Traqula's underlying parser toolkit, Chevrotain, performs its parser optimizations at runtime, making parser construction computationally expensive.
-To illustrate, parsing the 50 queries with a prebuilt and reused parser has a mean execution time of 2.5 ms,
-whereas creating a new parser for each query results in a mean execution time of 689.31 ms; a slowdown of 275.7 times.
-Moreover, because Chevrotain is optimised for JavaScript's V8 engine, many performance benefits rely on JIT compilation.
-Recreating the parser repeatedly may prevent or invalidate JIT optimizations, further degrading performance.
-This makes parser reuse essential in practice, as already adopted in systems such as the Comunica query engine.
-
-
-\begin{figure}[tbp]
-\centering
-    \includegraphics[width=0.7\textwidth]{img/barplot_means}
-    \caption{Execution time (ms) comparison between Traqula and the
-    SPARQL.js~\cite{sparqljs} parser plus the algebra transformation software SPARQLAlgebra.js~\cite{sparqlalgebrajs}
-    when parsing 50 real-world SPARQL 1.1 queries~\cite{dbpedia-bench}.
-    Parsing to both an AST (green) and to algebra (orange) is significantly faster using Traqula.}
-    \label{traqula-sparqljs}
-\end{figure}
-
-
-\section{Conclusion}
-\label{conclusion}
-
-
-In this paper, we introduced Traqula, a framework for modular query parsing, generation, and transformation.
-We argue that a modular parser is essential for the future of SPARQL querying, particularly in increasingly heterogeneous federated environments.
-By decoupling the various steps in query manipulation, Traqula enables rapid experimentation with new or modified language features.
-Furthermore, it facilitates query rewriting between different languages and supports the creation of modular query tooling,
-such as linters and reformatters, through easy AST and algebra manipulation.
-
-
-Traqula is designed for widespread adoption.
-It has already been integrated into the modular querying framework Comunica.
-In addition, we
-demonstrate its usability for extending language features as part of a Comunica tutorial.
-The framework is openly available on GitHub under the MIT license and is maintained by the Comunica association,
-ensuring long-term sustainability.
-
-
-Looking forward, Traqula's modular architecture and developer-friendly APIs pave the way for supporting additional query languages,
-such as SHACL Compact Syntax and GQL.
-
-
-\begin{credits}
-\subsubsection{\ackname}
-Jitse De Smet is a predoctoral fellow of the Research Foundation -- Flanders (FWO) (1SB8525N).
-Ruben Taelman is a postdoctoral fellow of the Research Foundation -- Flanders (FWO) (1202124N).
-\end{credits}
-
+    \begin{credits}
+        \subsubsection{\ackname}
+        Jitse De Smet is a predoctoral fellow of the Research Foundation -- Flanders (FWO) (1SB8525N).
+        Ruben Taelman is a postdoctoral fellow of the Research Foundation -- Flanders (FWO) (1202124N).
+    \end{credits}
 
 %
 % ---- Bibliography ----
@@ -810,6 +741,6 @@ Ruben Taelman is a postdoctoral fellow of the Research Foundation -- Flanders (F
 % BibTeX users should specify bibliography style 'splncs04'.
 % References will then be sorted and formatted in the correct style.
 %
-\bibliographystyle{splncs04}
-\bibliography{references}
+    \bibliographystyle{splncs04}
+    \bibliography{references}
 \end{document}
