@@ -16,6 +16,8 @@
 \usepackage{listings}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage[inline]{enumitem}
+\usepackage{makecell}
 \usepackage{tabularx}
 % Used for displaying a sample figure. If possible, figure files should
 % be included in EPS format.
@@ -51,7 +53,14 @@ Ruben Taelman\inst{1}\orcidID{0000-0001-5118-256X}}
 
     SPARQL engines continue to diverge in the versions and language extensions they support. With SPARQL 1.2 nearing completion and the working group’s plans toward future maintenance, this divergence is likely to grow. As a result, language tools that aim to support multiple SPARQL versions and dialects face increasing maintenance costs. Furthermore, areas such as SPARQL federation become harder to manage. To address these challenges, we introduce Traqula, a modular TypeScript-based framework for parsing, transforming, and generating SPARQL queries. This article presents Traqula’s architecture and its builder-based dependency-injection design, and we show how these components provide modular support for SPARQL 1.1 and 1.2 parsing and generation. Traqula enables round-tripping, supports generic algebraic and AST transformations, and delivers significantly faster parsing compared to current JavaScript-based SPARQL parsing. Traqula’s modular architecture enables flexible experimentation for researchers, and it is production-ready thanks to extensive testing and modern development techniques. Looking forward, Traqula lays the groundwork for supporting additional query languages, developing generic rewriting modules for SPARQL federation engines, and building robust tooling for an increasingly diverse SPARQL ecosystem.
 
-\keywords{SPARQL, query \and algebra \and modularity \and parser \and generator}
+\keywords{SPARQL \and query \and algebra \and modularity \and parser \and generator}
+
+    \textbf{Canonical version}: \href{https://traqula-resource.jitsedesmet.be/}{https://traqula-resource.jitsedesmet.be/} \\
+    \textbf{Resource type}: software package \\
+    \textbf{Licence}: MIT \\
+    \textbf{DOI}: \href{https://zenodo.org/records/17793334}{10.5281/zenodo.17793334} \\
+    \textbf{URL}: \href{https://github.com/comunica/traqula}{https://github.com/comunica/traqula}
+
 \end{abstract}
 %
 %
@@ -83,9 +92,9 @@ As a result, the growing diversity of SPARQL versions and dialects introduces se
     \item \textbf{Maintainability}: Tools that support multiple SPARQL versions typically do so by maintaining multiple software versions, or one version with many conditions, making maintainability highly challenging.
 \end{enumerate}
 
-\begin{figure}[htbp]
+\begin{figure}[tbp]
     \centering
-    \includegraphics[width=0.85\textwidth]{img/traqula-federation}
+    \includegraphics[width=0.50\textwidth]{img/traqula-federation}
     \caption{The federated SPARQL query (blue) uses SPARQL 1.2 features such as triple terms and uses the non-standard builtin function ADJUST~\cite{sparql-adjust}.
     The query targets four SPARQL endpoints, all supporting different SPARQL version, RDF profiles~\cite{rdf-1-2}, and language extensions.
     To allow query engines to integrate this heterogeneity,
@@ -123,11 +132,11 @@ These features allow queries to be parsed, transformed, and regenerated reliably
 This article presents Traqula, a modular SPARQL toolkit implementing these ideas.
 Traqula has already been integrated into the widely used Comunica SPARQL querying framework~\cite{comunica}, demonstrating its maturity and practical applicability.
 Traqula's modular and composable architecture enables researchers and practitioners to:
-\begin{enumerate}
+\begin{enumerate*}[label=\arabic*.]
     \item Experiment with grammar changes, including adding, modifying, or removing rules;
     \item tackle the complexities of federated SPARQL querying in a heterogeneous SPARQL ecosystem; and
     \item lay the foundation for future query formatting and rewriting tools.
-\end{enumerate}
+\end{enumerate*}
 Traqula is implemented in TypeScript and is available as open-source software under the MIT license on
 GitHub and npm,
 providing the community with a robust and flexible resource for building tools and engines for a heterogeneous SPARQL environment.
@@ -209,7 +218,7 @@ The parser must retain sufficient information to reproduce the original query st
 This requirement ensures that Traqula can serve as a foundation for reliable SPARQL editing, formatting,
 and rewriting tools.
 
-\begin{figure}[htbp]
+\begin{figure}[tbp]
     \centering
     \includegraphics[width=0.85\textwidth]{img/traqula-representations}
     \caption{Various representations of an algebraically equivalent SPARQL 1.1 query and its SPARQL 1.2 counterpart.
@@ -331,21 +340,14 @@ We can clearly see that parser generators are the dominant approach, with 13 of 
 Only one implementation uses a handwritten parser, and two employ a parser toolkit, namely Chevrotain.
 
 
-\begin{table}[htbp]
-    \caption{List of parsing software packages for various query languages,
-        including the underlying parsing framework and construction technique.
-        The table also indicates how each package satisfies the requirements established in \autoref{requirements}:
-        \textit{flexibility (F)},
-        \textit{round-tripping (R)},
-        \textit{web-based (W)}, and
-        \textit{language agnosticism (L)}.
-        Each requirement is marked as fully met ($\checkmark$), partially met ($\sim$), or not met ($\times$);
-        question marks indicate uncertainty.}
-    \label{parsers}
-    \centering
-    \begin{tabularx}{\textwidth}{|X|X|X|X|X|}
+\begin{table}[tbp]
+\label{parsers}
+\centering
+\newcolumntype{L}{>{\raggedright\arraybackslash}X<{\hspace{4pt}}}
+\begin{tabularx}{\textwidth}{|L|l|l|l|l|}
 \hline
-\textbf{Parsing Software} & \textbf{Query Language} & \textbf{Parsing Framework} & \textbf{Construction Technique} & \textbf{Req:\texttt{F R W L}} \\
+\makecell[lb]{\textbf{Parsing Software}} & \makecell[lb]{\textbf{Query}\\ \textbf{Language}} & \makecell[lb]{\textbf{Parsing}\\ \textbf{Framework}} &
+    \makecell[lb]{\textbf{Construction}\\ \textbf{Technique}} & \makecell[lb]{\textbf{Req:}\\ \texttt{F R W L}} \\
 \hline
 Apache Jena - arq(v5.6.0)~\cite{apache-jena} & SPARQL & JavaCC & Generated & $\times$ $\times$ $\times$ $\times$ \\
 \hline
@@ -380,6 +382,15 @@ opengql grammar (v1.9.0)~\cite{opengql} & GQL & ANTLR & Generated & $\sim$ $\tim
 Neo4J (v25)~\cite{neo4j} & Cypher & ANTLR & Generated & $\sim$ $\times$ $\sim$ $\times$ \\
 \hline
     \end{tabularx}
+    \caption{List of parsing software packages for various query languages,
+        including the underlying parsing framework and construction technique.
+        The table also indicates how each package satisfies the requirements established in \autoref{requirements}:
+        \textit{flexibility (F)},
+        \textit{round-tripping (R)},
+        \textit{web-based (W)}, and
+        \textit{language agnosticism (L)}.
+        Each requirement is marked as fully met ($\checkmark$), partially met ($\sim$), or not met ($\times$);
+        question marks indicate uncertainty.}
 \end{table}
 
 
@@ -461,7 +472,7 @@ This indirection enables users to replace or patch functionality simply by adjus
 while \autoref{rulemap} (right) shows Traqula's TypeScript definition of the \texttt{iri} parser and generator rules, each depending on named subrules.
 
 
-\begin{figure}[htbp]
+\begin{figure}[tbp]
     \centering
     \begin{minipage}[c]{0.35\textwidth}
         \centering
@@ -469,7 +480,7 @@ while \autoref{rulemap} (right) shows Traqula's TypeScript definition of the \te
     \end{minipage}%
     \hfill
     \begin{minipage}[c]{0.60\textwidth}
-        \begin{lstlisting}[language=Java,basicstyle=\scriptsize\ttfamily,breaklines=true]
+        \begin{lstlisting}[language=JavaScript,basicstyle=\fontsize{6}{7.6}\ttfamily,breaklines=true]
 export const iri: SparqlRule<'iri', TermIri> = {
   name: 'iri',
   impl: ({ SUBRULE, OR }) => () => OR<TermIri>([
@@ -510,9 +521,9 @@ Each builder exposes the same operations to manage the rule dictionary.
 creating a builder, adding a rule, patching a rules, and building the final artifact .
 
 
-\begin{figure}[htbp]
+\begin{figure}[tbp]
     \centering
-    \begin{lstlisting}[language=Java,basicstyle=\footnotesize\ttfamily,breaklines=true]
+    \begin{lstlisting}[language=JavaScript,basicstyle=\fontsize{6}{7.6}\ttfamily,breaklines=true]
 const iriGeneratorBuilder = GeneratorBuilder
   .create([iriFull, prefixedIri])
   .addRule(iri);
@@ -563,13 +574,13 @@ the transformers also support AST-level reformatting, since reformatting can be 
 To use the transformer, one instantiates a new transformer object, specifying the types of AST nodes or algebra operations,
 and optionally providing a default transformation context.
 Transformations can be guided through preVisitors, allowing to
-\begin{enumerate}
+\begin{enumerate*}[label=\arabic*.]
     \item stop traversal completely;
     \item continue traversal into descendants;
     \item skip specified properties of the current node;
     \item copy certain keys without traversal; and
     \item shallowly copy the current node.
-\end{enumerate}
+\end{enumerate*}
 The transformer maintains a stack of nodes to be transformed, ensuring that descendant nodes are processed before their parents.
 \autoref{transformer} illustrates a simple algebraic transformation that wraps a \textit{'distinct'} operation around the first \textit{'project'} node it encounters.
 In addition, we provide
@@ -577,9 +588,9 @@ a catalogue of known existing transformations powered by Traqula,
 thereby also demonstrating how Traqula can be used for traditional query optimizing or rewriting.
 
 
-\begin{figure}[htbp]
+\begin{figure}[tbp]
     \centering
-    \begin{lstlisting}[language=Java,basicstyle=\footnotesize\ttfamily,breaklines=true]
+    \begin{lstlisting}[language=JavaScript,basicstyle=\fontsize{6}{7.6}\ttfamily,breaklines=true]
 const transformed = new TransformerTyped<Sparql11Nodes>()
   .transformNode({ // A query as AST
     type: Algebra.Types.SLICE,
@@ -598,14 +609,8 @@ const transformed = new TransformerTyped<Sparql11Nodes>()
   });
     \end{lstlisting}
     \caption{Example usage of the transformer to wrap a \textit{'distinct'} node around the first \textit{'project'} node in an algebraic expression.
-    Providing input query
-
-    \texttt{SELECT * \{ \{ Select * \{ ?s ex:a ?o \} \} . ?s ex:b ?o . \} LIMIT 20}
-
-    would result in rewritten query
-
-    \texttt{SELECT DISTINCT * \{ \{ Select * \{ ?s ex:a ?o \} \} . ?s ex:b ?o . \} LIMIT 20}
-    .}
+    Providing input query \texttt{SELECT * \{ \{ Select * \{ ?s ex:a ?o \} \} . ?s ex:b ?o . \} LIMIT 20}
+    would result in rewritten query \texttt{SELECT DISTINCT * \{ \{ Select * \{ ?s ex:a ?o \} \} . ?s ex:b ?o . \} LIMIT 20}.}
     \label{transformer}
 \end{figure}
 
@@ -631,11 +636,11 @@ allowing IDEs to surface context-specific function signatures, prevent common in
 
 Traqula is developed openly on GitHub under the MIT licence, making the project straightforward to adopt, audit, modify, and extend.
 Documentation is provided through:
-\begin{enumerate}
+\begin{enumerate*}[label=\arabic*.]
     \item documentation pages maintained by the development team as part of exposed package READMEs (e.g. @traqula/parser-sparql-1-1),
     \item dedicated documentation guides, and
     \item JSDoc annotations that are directly visible within IDEs while also being exposed through an
-\end{enumerate}
+\end{enumerate*}
 automatically generated documentation website.
 Together, these choices reduce the barrier for integrating Traqula into research prototypes, production systems, and community-driven extensions.
 
@@ -709,9 +714,9 @@ Much of this advantage can be attributed to the performance of Chevrotain, the p
 
 
 
-\begin{figure}[htbp]
+\begin{figure}[tbp]
     \centering
-    \includegraphics[width=0.85\textwidth]{img/boxplots}
+    \includegraphics[width=0.7\textwidth]{img/boxplots}
     \caption{Variance of execution times (ms) for Traqula's SPARQL 1.1 and 1.2 parsers,
         when parsing 50 real world SPARQL 1.1 queries~\cite{dbpedia-bench} using different configurations.
         Parsing SPARQL 1.2 is always slightly slower than parsing SPARQL 1.1 due to increased grammar complexity,
@@ -730,17 +735,15 @@ Recreating the parser repeatedly may prevent or invalidate JIT optimizations, fu
 This makes parser reuse essential in practice, as already adopted in systems such as the Comunica query engine.
 
 
-\begin{figure}[htbp]
+\begin{figure}[tbp]
     \centering
-    \includegraphics[width=0.85\textwidth]{img/barplot_means}
+    \includegraphics[width=0.7\textwidth]{img/barplot_means}
     \caption{Execution time (ms) comparison between Traqula and the
     SPARQL.js~\cite{sparqljs} parser plus the algebra transformation software SPARQLAlgebra.js~\cite{sparqlalgebrajs}
     when parsing 50 real-world SPARQL 1.1 queries~\cite{dbpedia-bench}.
     Parsing to both an AST (green) and to algebra (orange) is significantly faster using Traqula.}
     \label{traqula-sparqljs}
 \end{figure}
-
-
 
 
 \section{Conclusion}
