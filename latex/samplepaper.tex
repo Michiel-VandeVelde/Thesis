@@ -96,8 +96,7 @@ maintenance mode \cite{rdf12-charter,modular-parsing},
 which could deliver more rapid successions of SPARQL once SPARQL 1.2 is finalized.
 As a result, the growing diversity of SPARQL versions and dialects introduces several challenges:
 
-
-\begin{enumerate}[noitemsep,topsep=2pt]
+\begin{enumerate}
     \item \textbf{Query evaluation}: A user query written in one version might not be executable by a SPARQL engine supporting another version.
     \item \textbf{Tooling}: Linters, formatters, editors, and language servers often assume a specific SPARQL version.
     \item \textbf{Maintainability}: Tools that support multiple SPARQL versions typically do so by maintaining multiple software versions, or one version with many conditions, making maintainability highly challenging.
@@ -170,8 +169,7 @@ and \autoref{implementation} discusses its implementation.
 
 Traqula was designed with a set of concrete requirements in mind. In this section, we outline the most important ones:
 
-
-\begin{enumerate}[noitemsep,topsep=2pt]
+\begin{enumerate}
     \item \textbf{Flexibility}: allowing composition of parser, transformer, or generator out of small components that can be easily added, removed, or replaced.
     \item \textbf{Round-tripping}: enable parsing into an AST and generating back to exactly the same string. When manipulations are made, only the manipulated parts change.
     \item \textbf{Web-based}: harnessing web technologies and enabling execution within and outside browsers, to ensure wide usability.
@@ -328,8 +326,7 @@ specifically focussing on approaches that support round-tripping.
 Parsing a structured language involves transforming it from a string into a desired data structure.
 Conceptually, parsing can be divided into three steps \cite{alfred2007compilers}:
 
-
-\begin{enumerate}[noitemsep,topsep=2pt]
+\begin{enumerate}
     \item \textbf{Lexical analysis} (or \textit{scanning}) performed by a \textit{lexer}: the source character stream is read and broken into non-overlapping sequences called lexemes. Each lexeme is classified by a token type, often defined using regular expressions. Lexemes may be represented as strings, ranges in the source, or both. The lexer outputs a stream or list of tokens, which are the lexeme representation together with its token type.
     \item \textbf{Syntax analysis} (or \textit{parsing}) performed by a \textit{parser}: after having generated a 'flat' stream or list of tokens, the next part is to create a data structure, typically a tree, often called the Abstract Syntax Tree (AST), representing the syntactic structure of the language. Some parsers can automatically parse into a Concrete Syntax Tree (CST) which traces all grammar information without generalization or abstraction.
     \item \textbf{Semantic analysis}: the AST is checked for non-structural constraints. In SPARQL, for example, the variable assigned in a \texttt{BIND} clause cannot be used in the immediately preceding tripleBlock within the same group. In programming languages, type checking is a common example of semantic analysis.
@@ -348,8 +345,7 @@ allowing the parser to fail fast in case a semantic constraint would be broken, 
 The \textbf{parser construction technique}, i.e., the actual programmatic definition of the different parsing steps,
 can happen in various ways; we identify the following three:
 
-
-\begin{enumerate}[noitemsep,topsep=2pt]
+\begin{enumerate}
     \item \textbf{Generated}: Code generation tools come with their Domain Specific Language (DSL) that will typically share similarities with Extended Backus--Naur Form (EBNF) and some Regular Expression dialect. The build process of the software that uses the custom parser should then compile the parser definition file (in the custom DSL) to the desired target language, which is typically the same language as the software being built. Example parser generators are Bison~\cite{bison-gnu} and ANTLR~\cite{parr1995antlr}.
     \item \textbf{Hand-built}: Code generation can come with optimization limitations, when the grammar allows for optimizations not taken by the code generator. Writing a handwritten parser is powerful but very challenging to get right, because compilers often know powerful, very specific, non-trivial optimizations. On top of programming language-specific optimizations, other powerful optimizations exist for specific sets of grammars, such as LL(1) and LL(k)~\cite{alfred2007compilers,parr1995antlr}.
     \item \textbf{Toolkits / libraries}: A compromise between hand-built parsers and generators exists in the form of toolkits / libraries. Parser building toolkits, e.g. Chevrotain~\cite{chevrotain}, are software libraries that provide an API that facilitates the construction of parsers within a specific programming language. The benefit of constructing a parser within the programming language the parser would be called from is that the project's code can be more coherent, allowing better integration, while also providing abstraction for powerful optimizations that can be made for specific grammars such as LL(1) and LL(k). Additionally, it allows the usage of language-specific features, e.g. a type system, which are often not present in DSLs used by parser generators, since DSLs are often limited in complexity. However, toolkits miss out on compiler-based optimizations since they cannot fully optimize the user's code, and similarly miss out on certain optimizations that could be possible in hand-built parsers.
@@ -817,4 +813,3 @@ Ruben Taelman is a postdoctoral fellow of the Research Foundation -- Flanders (F
 \bibliographystyle{splncs04}
 \bibliography{references}
 \end{document}
-
