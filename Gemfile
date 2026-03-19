@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'nanoc', '~> 4.7'
+gem 'nanoc', '~> 4.14'
 
 gem 'scholarmarkdown', '>= 3.3.0'
 
@@ -12,7 +12,7 @@ gem 'rubypants'
 gem 'sass'
 
 # references
-gem 'i18n', '< 1.1'
+gem 'i18n', '< 1.15'
 gem 'latex-decode'
 gem 'unicode_utils'
 gem 'citeproc-ruby', '>= 1.1.6'
