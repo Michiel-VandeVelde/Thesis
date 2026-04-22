@@ -47,3 +47,34 @@ code {
 img {
   color-scheme: light;
 }
+
+#frontmatter {
+  margin-top: 2rem;
+  margin-bottom: 3rem;
+}
+
+/* Match main h2 heading appearance, but suppress any counter prefix */
+#frontmatter h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 1.5em 0 0.5em;
+}
+
+#frontmatter h2::before,
+#frontmatter h3::before,
+#frontmatter h4::before {
+  content: "" !important;
+  counter-increment: none !important;
+}
+
+@media print {
+  #frontmatter h2 {
+    break-before: page;
+    page-break-before: always;
+  }
+
+  #frontmatter h2:first-child {
+    break-before: auto;
+    page-break-before: auto;
+  }
+}
