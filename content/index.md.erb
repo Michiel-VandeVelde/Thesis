@@ -5,21 +5,35 @@ title: "Whose Data Is It Anyway? Designing a User-Centric and Sovereign Architec
 # <%= @item[:title] %>
 
 {:#authors}
+
 - <%= person 'Michiel Van de Velde', 'https://michielvandevelde.be/', 'https://michielvandevelde.be/profile#me' %> <sup></sup>
 
 {:#affiliations}
-- {:#myaffiliation} Professionele Bachelor Elektronica-ICT, afstudeerrichting ICT
-- {:#myaffiliation} Academiejaar 2025-2026
 
+- {:#affiliation-programme} Professional Bachelor Electronics-ICT, specialisation ICT
+- {:#affiliation-year} Academic year 2025-2026
+- {:#affiliation-internal-supervisor} Internal Supervisor <%= person 'Bart Delrue', 'https://bartdelrue.github.io/', nil, false %>
+- {:#affiliation-external-supervisors} External Supervisors <%= person 'Pieter Colpaert', 'https://pietercolpaert.be/', nil, false %> and <%= person 'Ben de Meester', 'https://work.de-meester.org/#home', nil, false %>
 
-<%= section '0.abstract' %>
+<%= section '0.abstract' %>  
+
 </header>
 
-<main>
-  <!-- Add sections by specifying their file name, excluding the '.md' suffix. -->
+<section id="frontmatter" markdown="1">
+  <%= section 'preface' %>
+  <%= section 'tableofcontents' %>
+  <%= section 'listoffigures' %>
+  <%= section 'listoftables' %>
+  <%= section 'listofcodefragments' %>
+  <%= section 'listofabbreviations' %>
+  <%= section 'glossary' %>
   <%= section '1.introduction' %>
+</section>
+
+<main markdown="1">
+  
+  <%= section '3.literature' %>
+  <%= section '4.architecture' %> 
   <%= section '2.references' %>
-
 </main>
-
 <footer></footer>

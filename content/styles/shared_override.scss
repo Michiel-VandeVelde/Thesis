@@ -47,3 +47,70 @@ code {
 img {
   color-scheme: light;
 }
+
+#frontmatter {
+  margin-top: 2rem;
+  margin-bottom: 3rem;
+}
+
+/* Match main h2 heading appearance, but suppress any counter prefix */
+#frontmatter h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 1.5em 0 0.5em;
+}
+
+#frontmatter h2::before,
+#frontmatter h3::before,
+#frontmatter h4::before {
+  content: "" !important;
+  counter-increment: none !important;
+}
+
+@media print {
+  #frontmatter h2 {
+    break-before: page;
+    page-break-before: always;
+  }
+
+  #frontmatter h2:first-child {
+    break-before: auto;
+    page-break-before: auto;
+  }
+}
+@media print {
+  .index-entries,
+  .index-entries-root,
+  .index-entries ol,
+  .index-entries li,
+  .index-entries-root ol,
+  .index-entries-root li {
+    break-before: auto !important;
+    break-after: auto !important;
+    break-inside: auto !important;
+    page-break-before: auto !important;
+    page-break-after: auto !important;
+    page-break-inside: auto !important;
+  }
+
+  .index-entries,
+  .index-entries-root {
+    font-size: 0.9em;
+    line-height: 1.1;
+    margin-top: 0.3em;
+    margin-bottom: 0.3em;
+  }
+
+  .index-entries li,
+  .index-entries-root li {
+    margin-top: 0;
+    margin-bottom: 0.05em;
+  }
+
+  .index-entries ol,
+  .index-entries-root ol {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: 1.4em;
+  }
+}
