@@ -1,0 +1,13 @@
+@prefix acl: <http://www.w3.org/ns/auth/acl#>.
+
+<#read-auth>
+    a acl:Authorization;
+    acl:agent <https://alice.example/profile#me>;
+    acl:accessTo <https://bob.example/pod/history.ttl>;
+    acl:mode acl:Read.
+
+<#owner-auth>
+    a acl:Authorization;
+    acl:agent <https://bob.example/profile#me>;
+    acl:accessTo <https://bob.example/pod/history.ttl>;
+    acl:mode acl:Read, acl:Write, acl:Control.

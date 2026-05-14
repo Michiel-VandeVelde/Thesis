@@ -53,6 +53,13 @@ img {
   margin-bottom: 3rem;
 }
 
+#introduction p,
+#abstract p,
+main p {
+  margin-bottom: 0.75em !important;
+  text-indent: 0 !important;
+}
+
 /* Match main h2 heading appearance, but suppress any counter prefix */
 #frontmatter h2 {
   font-size: 1.5em;
