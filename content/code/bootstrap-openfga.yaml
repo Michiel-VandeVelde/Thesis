@@ -1,0 +1,12 @@
+---
+---
+- client-id: music-tracker-client
+  enable-service-account: true
+  openfga:
+    relationships:
+      - target-resource: "/slices/music-tracker"
+        relations: ["reader", "writer", "deleter"]
+      - target-resource: "/s3/music-tracker/cover-art"
+        relations: ["reader", "writer"]
+      - target-resource: "/slices/cross-service-profile"
+        relations: ["writer", "deleter"]

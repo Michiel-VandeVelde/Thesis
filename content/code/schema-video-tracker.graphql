@@ -1,0 +1,9 @@
+type Query @generateMutations(operations: ["add"]) {
+  watchActions(id: [ID], pageSize: Int = 100, cursor: String, orderBy: [String]): [schema_WatchAction!]
+  videos(id: [ID], pageSize: Int = 100, cursor: String, orderBy: [String]): [schema_VideoObject!]
+  channels(id: [ID], pageSize: Int = 100, cursor: String, orderBy: [String]): [schema_Person!]
+}
+
+type Subscription {
+  onWatchActionAdded: schema_WatchAction!
+}

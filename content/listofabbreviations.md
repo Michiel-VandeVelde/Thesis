@@ -17,11 +17,17 @@
     <tr><td>ICT</td><td>Information and Communication Technology</td></tr>
     <tr><td>IDLab</td><td>Internet and Data Lab</td></tr>
     <tr><td>JSON-LD</td><td>JavaScript Object Notation for Linked Data</td></tr>
+    <tr><td>JVM</td><td>Java Virtual Machine</td></tr>
+    <tr><td>LDP</td><td>Linked Data Platform</td></tr>
     <tr><td>LDES</td><td>Linked Data Event Streams</td></tr>
     <tr><td>ODRL</td><td>Open Digital Rights Language</td></tr>
     <tr><td>OIDC</td><td>OpenID Connect</td></tr>
     <tr><td>OAuth</td><td>Open Authorization</td></tr>
     <tr><td>RDF</td><td>Resource Description Framework</td></tr>
+    <tr><td>S3</td><td>Simple Storage Service</td></tr>
+    <tr><td>SDL</td><td>Schema Definition Language</td></tr>
+    <tr><td>SPARQL</td><td>SPARQL Protocol and RDF Query Language</td></tr>
+    <tr><td>SSE</td><td>Server-Sent Events</td></tr>
     <tr><td>URI</td><td>Uniform Resource Identifier</td></tr>
     <tr><td>URL</td><td>Uniform Resource Locator</td></tr>
     <tr><td>W3C</td><td>World Wide Web Consortium</td></tr>

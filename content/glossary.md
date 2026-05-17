@@ -7,11 +7,32 @@ Media behaviour data
 Media behaviour profile
 : A structured representation derived from media behaviour data over time, including patterns such as preferred genres, typical moments of use, recurring interests, or cross-platform consumption habits.
 
+Personal data
+: Any information relating to an identified or identifiable natural person. Under the GDPR, this includes not only directly identifying information but also behavioural data that can be linked to an individual. In this thesis, media behaviour data recorded by streaming services constitutes personal data because it is tied to a specific user account and can reveal preferences, habits, and identity.
+
 User-centric architecture
 : An architecture in which the user remains the central point of control over where personal data is stored, who may access it, and under which conditions it may be used.
 
 Data sovereignty
 : The ability of a user or organisation to exercise meaningful control over data, including access, storage, sharing, and governance.
+
+JSON-LD
+: A serialisation format for RDF data that is valid JSON and uses a `@context` field to map JSON keys to semantic vocabulary terms.
+
+Kvasir
+: A personal data broker developed at imec-IDLab that exposes a Solid-compatible storage API. Kvasir organises data into schema-governed partitions called slices and uses ClickHouse for analytical storage and Redpanda for event-based change notifications.
+
+Music Ontology
+: An RDF vocabulary for describing music-related concepts, including tracks, recordings, artists, and listening events.
+
+OpenFGA
+: An open-source relationship-based authorisation engine that models permissions as typed relationships between objects, such as a user having a writer relationship on a specific slice.
+
+Redpanda
+: A Kafka-compatible distributed event streaming platform used in the prototype to publish change events from Kvasir slices to the aggregation processor.
+
+Slice
+: A schema-governed partition within a Kvasir pod. Each slice holds a specific type of data, such as music listening events or video watch events, and has its own access rules.
 
 Solid
 : An ecosystem of specifications and tools for decentralised personal data management, where users store data in personal online data stores.
@@ -54,6 +75,9 @@ Policy engine
 
 Aggregation agent
 : A user-authorised component that combines media behaviour data from multiple services and produces an aggregated cross-service profile.
+
+Change processor
+: A component in the aggregation pipeline that consumes change events from Redpanda, derives a unified cross-service profile, and writes it back to the Kvasir pod.
 
 Audit log
 : A record of data access or usage, showing who accessed which data, when, and for what stated purpose.

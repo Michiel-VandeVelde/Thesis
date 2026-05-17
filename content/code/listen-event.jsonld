@@ -1,0 +1,14 @@
+{
+  "@context": {
+    "schema": "http://schema.org/",
+    "mo": "http://purl.org/ontology/mo/"
+  },
+  "@id": "urn:combine-ld:listen:b36c079c-79e4-4f9e-b4f9-cbb6a3d4d5a1:2024-11-15T20:32:00Z",
+  "@type": "schema:ListenAction",
+  "schema:startTime": "2024-11-15T20:32:00Z",
+  "schema:agent": { "@id": "http://localhost:8080/alice" },
+  "schema:object": {
+    "@id": "https://musicbrainz.org/recording/b36c079c-79e4-4f9e-b4f9-cbb6a3d4d5a1",
+    "@type": "mo:Track"
+  }
+}

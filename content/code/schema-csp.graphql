@@ -1,0 +1,27 @@
+type Query @generateMutations(operations: ["add"]) {
+  creators(id: [ID], pageSize: Int = 100, cursor: String,
+           orderBy: [String]): [csp_Creator!]
+  insights(id: [ID], pageSize: Int = 100, cursor: String,
+           orderBy: [String]): [csp_UserInsight!]
+}
+
+type csp_Creator {
+  id: ID!
+  schema_name: String
+  schema_sameAs: [ID]
+  schema_interactionStatistic: [csp_InteractionCounter!]
+}
+
+type csp_InteractionCounter @generateMutations(operations: ["add", "remove"]) {
+  id: ID!
+  schema_interactionType: ID!
+  schema_userInteractionCount: Int!
+}
+
+type csp_UserInsight @generateMutations(operations: ["add", "remove"]) {
+  id: ID!
+  schema_description: String!
+  schema_name: String!
+  schema_actionStatus: String!
+  schema_dateCreated: String!
+}
