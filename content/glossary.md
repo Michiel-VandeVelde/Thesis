@@ -93,3 +93,21 @@ Interoperability
 
 Mosaic effect
 : The privacy risk that separate pieces of seemingly harmless data can reveal sensitive information when combined.
+
+GraphQL
+: A query language and API specification that allows clients to request exactly the data they need from a server. In this thesis, Kvasir exposes each slice through a GraphQL API generated from the slice's SDL schema.
+
+Keycloak
+: An open-source identity and access management server used in the prototype to issue authentication tokens for both user-facing clients and background service accounts.
+
+MusicBrainz
+: An open music encyclopedia that provides structured metadata for recordings, releases, and artists, identified by stable URIs. The prototype uses the MusicBrainz API to enrich listen events with album and artist metadata.
+
+Ollama
+: A tool for running large language models locally. In the prototype, Ollama is used by the inference service to generate recommendations from the cross-service profile without transmitting behavioural data to external APIs.
+
+schema.org
+: A shared vocabulary maintained by a community of major search engines and web publishers, providing standardised terms for describing entities such as actions, persons, and creative works. In this thesis, schema.org terms are used to represent media interaction events in a way that is interoperable across services.
+
+TrustFlows
+: A framework for building trustworthy data flows that are interoperable, legally compliant, and user-centric. In this thesis, TrustFlows provides the governance model that complements Solid's storage and access control capabilities, particularly through ODRL-based usage conditions.
