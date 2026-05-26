@@ -9,6 +9,7 @@ type csp_Creator {
   id: ID!
   schema_name: String
   schema_sameAs: [ID]
+  schema_isBasedOn: String
   schema_interactionStatistic: [csp_InteractionCounter!]
 }
 
