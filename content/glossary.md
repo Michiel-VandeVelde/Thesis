@@ -109,5 +109,5 @@ Ollama
 schema.org
 : A shared vocabulary maintained by a community of major search engines and web publishers, providing standardised terms for describing entities such as actions, persons, and creative works. In this thesis, schema.org terms are used to represent media interaction events in a way that is interoperable across services.
 
-TrustFlows
-: A framework for building trustworthy data flows that are interoperable, legally compliant, and user-centric. In this thesis, TrustFlows provides the governance model that complements Solid's storage and access control capabilities, particularly through ODRL-based usage conditions.
+Trustflows
+: A framework for building trustworthy data flows that are interoperable, legally compliant, and user-centric. In this thesis, Trustflows provides the governance model that complements Solid's storage and access control capabilities, particularly through ODRL-based usage conditions.
