@@ -1,5 +1,3 @@
----
----
 - client-id: music-tracker-client
   enable-service-account: true
   openfga:
