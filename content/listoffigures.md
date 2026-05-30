@@ -1,7 +1,7 @@
 ## List of figures
 {:.no-label-increment}
 
-- **Fig. 1:** Individual data fragments, each seemingly harmless in isolation, combine to form a detailed and revealing profile of a person. Own work.
+- **Fig. 1:** Individual data fragments, each seemingly harmless in isolation, combine to form a detailed and revealing profile of a person. Own work, created with AI assistance.
 - **Fig. 2:** Organisational structure tends to mirror system design. Adapted from Sketchplanations, "Conway's Law" [7].
 - **Fig. 3:** Key principles of a user-centric media profile architecture. Own work.
 - **Fig. 4:** Solid pod resources accessed via HTTP verbs, showing read, write, and append operations by different actor types. Own work.

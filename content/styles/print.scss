@@ -30,6 +30,19 @@ ol.index-entries[depth="1"] {
   }
 }
 
+figure.listing pre {
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+@media print {
+  main > section,
+  #frontmatter > section {
+    break-before: page !important;
+    page-break-before: always !important;
+  }
+}
+
 figure.numbered pre {
   counter-reset: precode;
 

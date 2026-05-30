@@ -1,3 +1,10 @@
-with-clause: read current schema_userInteractionCount for the track, album, and artists
-delete: remove the existing InteractionCounter triples (if present)
-insert: write new InteractionCounter triples with count + 1 (or 1 if no counter existed)
+with-clause:
+  read current schema_userInteractionCount
+  for the track, album, and artists
+
+delete:
+  remove existing InteractionCounter triples
+
+insert:
+  write new InteractionCounter triples
+  with count + 1 (or 1 if no counter existed)

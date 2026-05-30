@@ -48,6 +48,12 @@ img {
   color-scheme: light;
 }
 
+#lst-delete-then-insert code,
+#lst-delete-then-insert code * {
+  color: inherit !important;
+  background: transparent !important;
+}
+
 #frontmatter {
   margin-top: 2rem;
   margin-bottom: 3rem;
