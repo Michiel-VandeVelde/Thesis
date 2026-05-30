@@ -1,0 +1,10 @@
+{
+  artists(orderBy: ["schema_interactionStatistic.schema_userInteractionCount desc"]) {
+    id
+    foaf_name
+    foaf_depiction
+    schema_interactionStatistic {
+      schema_userInteractionCount
+    }
+  }
+}

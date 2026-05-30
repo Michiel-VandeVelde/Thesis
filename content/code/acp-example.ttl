@@ -1,0 +1,16 @@
+@prefix acp: <http://www.w3.org/ns/solid/acp#>.
+
+<#matcher>
+    a acp:Matcher;
+    acp:agent <https://alice.example/profile#me>;
+    acp:client <https://music-app.example/clientid>.
+
+<#policy>
+    a acp:Policy;
+    acp:allow acp:Read;
+    acp:allOf <#matcher>.
+
+<#acr>
+    a acp:AccessControlResource;
+    acp:resource <https://bob.example/pod/history.ttl>;
+    acp:accessControl <#policy>.

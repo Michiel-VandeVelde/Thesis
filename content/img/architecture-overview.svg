@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 400" font-family="'Source Sans Pro', Helvetica, Arial, sans-serif" font-size="13">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#455a64"/>
+    </marker>
+    <marker id="arr-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#1565c0"/>
+    </marker>
+    <marker id="arr-purple" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6a1b9a"/>
+    </marker>
+    <marker id="arr-grey" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#616161"/>
+    </marker>
+  </defs>
+
+  <!-- ── Media Services ── -->
+  <rect x="20" y="80" width="145" height="46" rx="6" fill="#e8f5e9" stroke="#2e7d32" stroke-width="1.5"/>
+  <text x="92" y="99" text-anchor="middle" font-weight="bold" fill="#1b5e20">Music Service</text>
+  <text x="92" y="116" text-anchor="middle" font-size="11" fill="#2e7d32">media platform</text>
+
+  <rect x="20" y="185" width="145" height="46" rx="6" fill="#e8f5e9" stroke="#2e7d32" stroke-width="1.5"/>
+  <text x="92" y="204" text-anchor="middle" font-weight="bold" fill="#1b5e20">Video Service</text>
+  <text x="92" y="221" text-anchor="middle" font-size="11" fill="#2e7d32">media platform</text>
+
+  <!-- ── Policy Engine ── -->
+  <rect x="208" y="118" width="105" height="75" rx="6" fill="#fff8e1" stroke="#f57f17" stroke-width="1.5"/>
+  <text x="260" y="148" text-anchor="middle" font-weight="bold" fill="#e65100">Policy</text>
+  <text x="260" y="165" text-anchor="middle" font-weight="bold" fill="#e65100">Engine</text>
+  <text x="260" y="182" text-anchor="middle" font-size="10" fill="#bf360c">ODRL / consent</text>
+
+  <!-- ── User Pod ── -->
+  <rect x="360" y="60" width="170" height="215" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+  <!-- user icon -->
+  <circle cx="445" cy="42" r="9" fill="none" stroke="#1565c0" stroke-width="1.5"/>
+  <path d="M 434 60 Q 445 55 456 60" fill="none" stroke="#1565c0" stroke-width="1.5"/>
+  <text x="445" y="83" text-anchor="middle" font-weight="bold" fill="#0d47a1">User's Pod</text>
+
+  <rect x="376" y="93" width="138" height="38" rx="4" fill="#bbdefb" stroke="#1565c0" stroke-width="1"/>
+  <text x="445" y="108" text-anchor="middle" font-size="11" font-weight="bold" fill="#0d47a1">Raw Events</text>
+  <text x="445" y="123" text-anchor="middle" font-size="10" fill="#1565c0">plays · pauses · searches</text>
+
+  <rect x="376" y="140" width="138" height="38" rx="4" fill="#bbdefb" stroke="#1565c0" stroke-width="1"/>
+  <text x="445" y="155" text-anchor="middle" font-size="11" font-weight="bold" fill="#0d47a1">Service Summaries</text>
+  <text x="445" y="170" text-anchor="middle" font-size="10" fill="#1565c0">per-platform aggregates</text>
+
+  <rect x="376" y="187" width="138" height="38" rx="4" fill="#bbdefb" stroke="#1565c0" stroke-width="1"/>
+  <text x="445" y="202" text-anchor="middle" font-size="11" font-weight="bold" fill="#0d47a1">Cross-Service Profile</text>
+  <text x="445" y="217" text-anchor="middle" font-size="10" fill="#1565c0">aggregated behaviour</text>
+
+  <!-- ── Aggregation Agent ── -->
+  <rect x="578" y="93" width="160" height="55" rx="6" fill="#f3e5f5" stroke="#6a1b9a" stroke-width="1.5"/>
+  <text x="658" y="116" text-anchor="middle" font-weight="bold" fill="#4a148c">Aggregation Agent</text>
+  <text x="658" y="134" text-anchor="middle" font-size="10" fill="#6a1b9a">user-authorised · LDES</text>
+
+  <!-- ── Recommendation Service ── -->
+  <rect x="578" y="198" width="160" height="46" rx="6" fill="#e8f5e9" stroke="#2e7d32" stroke-width="1.5"/>
+  <text x="658" y="217" text-anchor="middle" font-weight="bold" fill="#1b5e20">Recommendation</text>
+  <text x="658" y="234" text-anchor="middle" font-weight="bold" fill="#1b5e20">Service</text>
+
+  <!-- ── Audit Log ── -->
+  <rect x="360" y="320" width="170" height="50" rx="6" fill="#f5f5f5" stroke="#616161" stroke-width="1.5"/>
+  <text x="445" y="341" text-anchor="middle" font-weight="bold" fill="#212121">Audit Log</text>
+  <text x="445" y="358" text-anchor="middle" font-size="10" fill="#616161">who · when · purpose</text>
+
+  <!-- ── Arrows ── -->
+
+  <!-- Music Service → Policy Engine -->
+  <path d="M 165 103 C 188 103 200 142 208 148" stroke="#455a64" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+
+  <!-- Video Service → Policy Engine -->
+  <path d="M 165 208 C 188 208 200 170 208 165" stroke="#455a64" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+
+  <!-- Arrow label: authenticate -->
+  <text x="172" y="168" text-anchor="middle" font-size="10" fill="#455a64">Solid-OIDC</text>
+
+  <!-- Policy Engine → Pod -->
+  <line x1="313" y1="155" x2="358" y2="155" stroke="#f57f17" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="335" y="148" text-anchor="middle" font-size="10" fill="#e65100">write</text>
+
+  <!-- Pod → Aggregation Agent (read events) -->
+  <line x1="530" y1="118" x2="576" y2="118" stroke="#1565c0" stroke-width="1.5" marker-end="url(#arr-blue)"/>
+  <text x="553" y="111" text-anchor="middle" font-size="10" fill="#1565c0">read</text>
+
+  <!-- Aggregation Agent → Pod (write profile, curved back) -->
+  <path d="M 578 138 C 556 162 540 195 532 205" stroke="#6a1b9a" stroke-width="1.5" fill="none" marker-end="url(#arr-purple)"/>
+  <text x="571" y="178" text-anchor="middle" font-size="10" fill="#6a1b9a">write profile</text>
+
+  <!-- Pod → Recommendation Service -->
+  <line x1="530" y1="218" x2="576" y2="220" stroke="#1565c0" stroke-width="1.5" marker-end="url(#arr-blue)"/>
+  <text x="553" y="212" text-anchor="middle" font-size="10" fill="#1565c0">read profile</text>
+
+  <!-- Pod → Audit Log -->
+  <line x1="445" y1="275" x2="445" y2="318" stroke="#616161" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arr-grey)"/>
+  <text x="462" y="302" font-size="10" fill="#616161">log access</text>
+
+</svg>

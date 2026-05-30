@@ -1,0 +1,26 @@
+type Query @generateMutations(operations: ["add"]) {
+  listenActions(id: [ID], pageSize: Int = 100, cursor: String, orderBy: [String]): [schema_ListenAction!]
+  tracks(id: [ID], pageSize: Int = 100, cursor: String, orderBy: [String]): [mo_Track!]
+  albums(id: [ID], pageSize: Int = 100, cursor: String, orderBy: [String]): [mo_Record!]
+  artists(id: [ID], pageSize: Int = 100, cursor: String, orderBy: [String]): [mo_MusicGroup!]
+}
+
+type Subscription {
+  onListenActionAdded: schema_ListenAction!
+}
+
+type schema_ListenAction {
+  id: ID!
+  schema_startTime: String!
+  schema_agent: ID!
+  schema_object: mo_Track!
+}
+
+type mo_Track {
+  id: ID!
+  dc_title: String
+  mo_track_number: String
+  mo_duration: Int
+  foaf_maker: [mo_MusicGroup!]
+  schema_interactionStatistic: [schema_InteractionCounter!]
+}

@@ -1,0 +1,8 @@
+@prefix schema: <https://schema.org/> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+@prefix ev:     <https://alice.pod.example/events/> .
+
+ev:event1 a schema:ListenAction ;
+    schema:agent  <https://alice.pod.example/profile/card#me> ;
+    schema:object <https://musicbrainz.org/recording/song123> ;
+    schema:startTime "2024-05-08T14:32:00Z"^^xsd:dateTime .
